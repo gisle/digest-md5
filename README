@@ -2,7 +2,7 @@ Digest::MD5
 -----------
 
 This is a Perl5 extension interface to the RSA Data Security Inc. MD5
-Message Digest algorithm.  We also provide modules to do HMAC.
+Message Digest algorithm.  We also provide modules to do MD2 and HMAC.
 
 To build the extension, unpack this distribution somewhere, create the
 Makefile using 'perl Makefile.PL' and do a 'make', 'make test', and if
@@ -13,7 +13,7 @@ Futher documentation is embedded in the individual modules.
 
 Copyright 1998 Gisle Aas.
 Copyright 1995-1996 Neil Winton.
-Copyright 1991-1992 RSA Data Security, Inc.
+Copyright 1990-1992 RSA Data Security, Inc.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
