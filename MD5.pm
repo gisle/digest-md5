@@ -1,16 +1,17 @@
 package MD5;
 
 use strict;
-use vars qw($VERSION @ISA @EXPORT);
+use vars qw($VERSION @ISA @EXPORT_OK);
 
-require Exporter;
-require DynaLoader;
-
-@ISA = qw(Exporter DynaLoader);
-@EXPORT = qw();
 $VERSION = '1.9951';  # $Date$
 
-bootstrap MD5 $VERSION;
+require Exporter;
+*import = \&Exporter::import;
+@EXPORT_OK = qw(md5 md5_hex md5_base64);
+
+require DynaLoader;
+@ISA=qw(DynaLoader);
+MD5->bootstrap($VERSION);
 
 *reset = \&new;
 

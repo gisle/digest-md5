@@ -370,6 +370,47 @@ static MD5_CTX* get_md5_ctx(SV* sv)
     croak("Not a reference to an MD5 object");
 }
 
+static char* hex_16(unsigned char* from, char* to)
+{
+    static char *hexdigits = "0123456789abcdef";
+    unsigned char *end = from + 16;
+    char *d = to;
+
+    while (from < end) {
+	*d++ = hexdigits[(*from >> 4)];
+	*d++ = hexdigits[(*from & 0x0F)];
+	from++;
+    }
+    *d = '\0';
+    return to;
+}
+
+static char* base64_16(unsigned char* from, char* to)
+{
+    static char* base64 =
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    unsigned char *end = from + 16;
+    unsigned char c1, c2, c3;
+    char *d = to;
+
+    while (1) {
+	c1 = *from++;
+	*d++ = base64[c1>>2];
+	if (from == end) {
+	    *d++ = base64[(c1 & 0x3) << 4];
+	    break;
+	}
+	c2 = *from++;
+	c3 = *from++;
+	*d++ = base64[((c1 & 0x3) << 4) | ((c2 & 0xF0) >> 4)];
+	*d++ = base64[((c2 & 0xF) << 2) | ((c3 & 0xC0) >>6)];
+	*d++ = base64[c3 & 0x3F];
+    }
+    *d = '\0';
+    return to;
+}
+
+
 /********************************************************************/
 
 typedef PerlIO* InputStream;
@@ -452,19 +493,10 @@ hexdigest(context)
 	MD5_CTX* context
     PREINIT:
 	unsigned char digeststr[16];
-	static char *hexdigits = "0123456789abcdef";
 	char hexstr[33];
-	unsigned char *s = digeststr;
-	char* d = hexstr;
     CODE:
         MD5Final(digeststr, context);
-	while (s < digeststr + sizeof(digeststr)) {
-	    *d++ = hexdigits[(*s >> 4)];
-	    *d++ = hexdigits[(*s & 0x0F)];
-	    s++;
-	}
-	*d = '\0';
-	RETVAL = hexstr;	
+	RETVAL = hex_16(digeststr, hexstr);
     OUTPUT:
 	RETVAL
 
@@ -498,3 +530,45 @@ b64digest(context)
         RETVAL = b64str;
     OUTPUT:
 	RETVAL
+
+SV*
+md5(...)
+    ALIAS:
+	MD5::md5        = 1
+	MD5::md5_hex    = 2
+	MD5::md5_base64 = 3
+    PREINIT:
+	MD5_CTX ctx;
+	int i;
+	STRLEN len;
+	unsigned char *data;
+	unsigned char digeststr[16];
+        char result[33];
+        char *str;
+    PPCODE:
+	MD5Init(&ctx);
+	for (i = 0; i < items; i++) {
+	    data = (unsigned char *)(SvPV(ST(i), len));
+	    MD5Update(&ctx, data, len);
+	}
+	MD5Final(digeststr, &ctx);
+
+        switch (ix) {
+	case 1:
+	    str = (char*)digeststr;
+	    len = 16;
+	    break;
+	case 2:
+	    str = hex_16(digeststr, result);
+	    len = 32;
+	    break;
+	case 3:
+	    str = base64_16(digeststr, result);
+	    len = 22;
+	    break;
+	default:
+	    croak("Bad md5 function index");
+	    break;
+	}
+        ST(0) = sv_2mortal(newSVpv(str,len));
+        XSRETURN(1);

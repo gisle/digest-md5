@@ -13,6 +13,8 @@ Revision history for Perl extension MD5.
 
       MD5->new($data)->hexdigest;
 
+   New function that are exported on request: md5, md5_hex, md5_base64
+
 
 
 1998-10-22   Gisle Aas <aas@sn.no>
