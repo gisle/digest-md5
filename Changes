@@ -1,5 +1,16 @@
 1998-10-28   Gisle Aas <aas@sn.no>
 
+   Release 1.99_59
+
+   Makefile.PL will run a test program to find out if U32 values can
+   be aligned anywhere.  This hopefully cures the core dumps reported
+   on Solaris and other big endian systems.  Thanks to Graham Barr for
+   debugging this.
+
+
+
+1998-10-28   Gisle Aas <aas@sn.no>
+
    Release 1.99_58
 
    Should be very close to a 2.00 release now.  Need some success
