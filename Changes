@@ -1,19 +1,25 @@
-Revision history for Perl extension MD5.
+1998-10-22   Gisle Aas <aas@sn.no>
 
    Release 1.99_51
 
-   Make MD5 subclassable.
+   The MD5 class is now subclassable.
 
    The add() and addfile() methods now return $self.
 
-   The reset() method is just an alias for new()
+   The reset() method is just an alias for new().
 
-   The new constructor now takes optional arguments which are
+   The constructor (MD5->new) now takes optional arguments which are
    automatically added.  It means that we can now write:
 
       MD5->new($data)->hexdigest;
 
-   New function that are exported on request: md5, md5_hex, md5_base64
+   New $md5->b62digest method.
+
+   New functions that are exported on request: md5, md5_hex, md5_base64
+
+   Included RFC 1321
+
+   Barely started to update the documentation.
 
 
 
@@ -36,7 +42,7 @@ Revision history for Perl extension MD5.
 
 
 
-Neil Winton's versions:
+Neil Winton's versions below:
 
 
 *** 96/06/20 Version 1.7
