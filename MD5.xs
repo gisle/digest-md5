@@ -364,9 +364,9 @@ MD5_CTX *context;                                       /* context */
 
 static MD5_CTX* get_md5_ctx(SV* sv)
 {
-    if (sv_derived_from(sv, "MD5"))
+    if (sv_derived_from(sv, "Digest::MD5"))
 	return (MD5_CTX*)SvIV(SvRV(sv));
-    croak("Not a reference to an MD5 object");
+    croak("Not a reference to a Digest::MD5 object");
 }
 
 static char* hex_16(unsigned char* from, char* to)
@@ -414,7 +414,7 @@ static char* base64_16(unsigned char* from, char* to)
 
 typedef PerlIO* InputStream;
 
-MODULE = MD5		PACKAGE = MD5
+MODULE = Digest::MD5		PACKAGE = Digest::MD5
 
 PROTOTYPES: DISABLE
 
@@ -514,9 +514,9 @@ b64digest(context)
 SV*
 md5(...)
     ALIAS:
-	MD5::md5        = 1
-	MD5::md5_hex    = 2
-	MD5::md5_base64 = 3
+	Digest::MD5::md5        = 1
+	Digest::MD5::md5_hex    = 2
+	Digest::MD5::md5_base64 = 3
     PREINIT:
 	MD5_CTX ctx;
 	int i;
