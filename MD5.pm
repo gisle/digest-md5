@@ -1,13 +1,13 @@
 package Digest::MD5;
 
 use strict;
-use vars qw($VERSION @ISA @EXPORT);
+use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = '1.9953';  # $Date$
+$VERSION = '1.9954';  # $Date$
 
 require Exporter;
 *import = \&Exporter::import;
-@EXPORT = qw(md5_bin md5_hex md5_base64);
+@EXPORT_OK = qw(md5 md5_hex md5_base64);
 
 require DynaLoader;
 @ISA=qw(DynaLoader);
@@ -25,9 +25,9 @@ Digest::MD5 - Perl interface to the MD5 Message-Digest Algorithm
 =head1 SYNOPSIS
 
  # Procedural style
- use Digest::MD5  qw(md5_bin md5_hex md5_base64);
+ use Digest::MD5  qw(md5 md5_hex md5_base64);
 
- $digest = unpack("H*", md5_bin($data));
+ $digest = unpack("H*", md5($data));
  $digest = md5_hex($data);
  $digest = md5_base64($data);
     
@@ -81,22 +81,22 @@ encoding.
 
 =head1 FUNCTIONS
 
-The following functions are exported.
+The following functions can be exported on request.
 
 =over 4
 
-=item md5_bin($data,...)
+=item md5($data,...)
 
 This function will concatenate all the data given as argument as the
 message and return the binary MD5 digest.
 
 =item md5_hex($data,...)
 
-Same as md5_bin(), but will return the digest in hexadecimal form.
+Same as md5(), but will return the digest in hexadecimal form.
 
 =item md5_base64($data,...)
 
-Same as md5_bin(), but will return the digest as a base64 encoded string.
+Same as md5(), but will return the digest as a base64 encoded string.
 
 =back
 
