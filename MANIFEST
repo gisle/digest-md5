@@ -17,6 +17,13 @@ lib/Digest/HMAC_SHA1.pm HMAC using SHA-1
 MD5.xs			MD5 Perl 'XS' source file
 typemap			Supplementary typemap
 Makefile.PL		Perl Makefile builder
+SHA1/Makefile.PL	Perl Makefile builder
+SHA1/SHA1.pm		Digest::SHA1 module
+SHA1/SHA1.xs		SHA-1 XS implementation
+SHA1/lib/SHA.pm		SHA backwards compatibility stuff
+SHA1/t/sha.t		Uwe's old test
+SHA1/t/sha1.t		Test if Digest::SHA1 works
+SHA1/typemap		Supplementary typemap
 rfc1321.txt		The MD5 Message-Digest Algorithm
 rfc2104.txt		HMAC: Keyed-Hashing for Message Authentication
 t/digest.t		Test Digest.pm loader
@@ -24,7 +31,6 @@ t/files.t		Check a few files.
 t/md5.t			Test suite using standard Perl conventions
 t/md5-aaa.t		Exercise padding code
 t/rfc2202.t		Test Cases for HMAC-MD5 and HMAC-SHA-1
-t/sha1.t		The Digest::SHA1 wrapper
 Changes			Version history
 examples/mddriver.pl	Example driver script after mddriver.c in RFC 1321
 examples/twdigest.pl	Example code to format a digest like Tripwire
