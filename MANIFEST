@@ -12,9 +12,11 @@ typemap			Supplementary typemap
 Makefile.PL		Perl Makefile builder
 rfc1321.txt		The MD5 Message-Digest Algorithm
 rfc2104.txt		HMAC: Keyed-Hashing for Message Authentication
+t/digest.t		Test Digest.pm loader
 t/files.t		Check a few files.
 t/md5.t			Test suite using standard Perl conventions
 t/rfc2202.t		Test Cases for HMAC-MD5 and HMAC-SHA-1
+t/sha1.t		The Digest::SHA1 wrapper
 Changes			Version history
 examples/mddriver.pl	Example driver script after mddriver.c in RFC 1321
 examples/twdigest.pl	Example code to format a digest like Tripwire
