@@ -200,7 +200,7 @@ MD5Transform(MD5_CTX* ctx, const U8* buf, STRLEN blocks)
     U32 C = ctx->C;
     U32 D = ctx->D;
 
-#if BYTEORDER == 0x1234 && !defined(U32_ALIGNMENT_REQUIRED)
+#ifndef U32_ALIGNMENT_REQUIRED
     const U32 *x = (U32*)buf;  /* really just type casting */
 #endif
 
