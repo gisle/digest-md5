@@ -1,3 +1,11 @@
+1999-03-15   Gisle Aas <gisle@aas.no>
+
+   Release 2.05
+
+   Included Digest::SHA1 based on Uwe Hollerbach's SHA module.
+
+
+
 1999-03-05   Gisle Aas <gisle@aas.no>
 
    Release 2.04
