@@ -623,7 +623,7 @@ md5(...)
     PPCODE:
 	MD5Init(&ctx);
 	if (PL_dowarn && items > 1) {
-	    data = SvPV(ST(0), len);
+	    data = (unsigned char *)SvPV(ST(0), len);
 	    if (len == 11 && memEQ("Digest::MD5", data, 11)) {
 	         char *f = (ix == F_BIN) ? "md5" :
                            (ix == F_HEX) ? "md5_hex" : "md5_base64";
