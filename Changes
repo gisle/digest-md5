@@ -1,3 +1,15 @@
+1998-10-25   Gisle Aas <aas@sn.no>
+
+   Release 1.99_55
+
+   Grahams HMAC_MD5.pm splitted into two modules.  Digest::HMAC and
+   Digest::HMAC_MD5.  Also provide functional interface.  Documentation
+   is still lacking.
+
+   Included RFC 2202 based test for HMAC-MD5.
+
+
+
 1998-10-24   Gisle Aas <aas@sn.no>
 
    Release 1.99_54
