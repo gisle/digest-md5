@@ -17,7 +17,7 @@ sub new
     my $algorithm = shift;
     my $class = $MMAP{$algorithm} || "Digest::$algorithm";
     no strict 'refs';
-    unless (%{"$class\::"}) {
+    unless (exists ${"$class\::"}{"VERSION"}) {
 	eval "require $class";
 	die $@ if $@;
     }
