@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MD5_DEBUG
+//#define MD5_DEBUG
 
-#define BYTEORDER 0x123
+#define BYTEORDER 0x1234
 
 typedef unsigned int U32;
 typedef unsigned char U8;
@@ -36,7 +36,7 @@ typedef unsigned int STRLEN;
 			|(((x)>>24)&0xFF)	\
 			|(((x)&0x0000FF00)<<8)	\
 			|(((x)&0x00FF0000)>>8)	)
-#else                         /* something else */
+#else                         /* something else, for instance 64-bit */
   #ifdef byteswap
       #undef byteswap
   #endif
@@ -51,10 +51,10 @@ static void u2s(U32 u, U8* s)
 
 static void s2u(const U8* s, U32* u)
 {
-    *u = (U8)(*s++)       |
-         (U8)(*s++ << 8)  |
-         (U8)(*s++ << 16) |
-         (U8)(*s   << 24);
+    *u =  (U32)(*s)            |
+         ((U32)(*(s+1)) << 8)  |
+         ((U32)(*(s+2)) << 16) |
+         ((U32)(*(s+3)) << 24);
 }
 
 #endif                        /* endianness test */
@@ -63,7 +63,7 @@ static void s2u(const U8* s, U32* u)
 static void my_memcpy(char *b, char*d, const char*s, unsigned int len)
 {
     static int mcount = 0;
-    printf("%5d: memcpy(b+%d, %p, %d)\n", ++mcount, d-b, s, len);
+    fprintf(stderr, "%5d: memcpy(b+%d, %p, %d)\n", ++mcount, d-b, s, len);
     memcpy(d,s,len);
 }
 #define memcpy(d,s,l) my_memcpy(ctx->buffer,(d),(s),(l))
@@ -190,17 +190,17 @@ MD5Transform(MD5_CTX* ctx, const void* buf, STRLEN blocks)
 
 #ifdef MD5_DEBUG
     if (buf == ctx->buffer)
-      printf("%5d: Transform ctx->buffer", ++tcount);
+      fprintf(stderr,"%5d: Transform ctx->buffer", ++tcount);
     else 
-      printf("%5d: Transform %p (%d)", ++tcount, buf, blocks);
+      fprintf(stderr,"%5d: Transform %p (%d)", ++tcount, buf, blocks);
 
     {
 	int i;
-	printf("[");
+	fprintf(stderr,"[");
 	for (i = 0; i < 16; i++) {
-	    printf("%x,", x[i]);
+	    fprintf(stderr,"%x,", x[i]);
 	}
-	printf("]\n");
+	fprintf(stderr,"]\n");
     }
 #endif
 
@@ -310,7 +310,7 @@ MD5Update(MD5_CTX* ctx, const U8* buf, STRLEN len)
 
 #ifdef MD5_DEBUG  
   static int ucount = 0;
-  printf("%5i: Update(%s, %p, %d)\n", ++ucount, ctx_dump(ctx), buf, len);
+  fprintf(stderr,"%5i: Update(%s, %p, %d)\n", ++ucount, ctx_dump(ctx), buf, len);
 #endif
 
   ctx->bytes_low += len;
@@ -344,7 +344,7 @@ MD5Final(U8* digest, MD5_CTX *ctx)
   STRLEN fill = ctx->bytes_low & 0x3F;
   STRLEN padlen = (fill < 56 ? 56 : 120) - fill;
 #ifdef MD5_DEBUG
-  printf("       Final:  %s\n", ctx_dump(ctx));
+  fprintf(stderr,"       Final:  %s\n", ctx_dump(ctx));
 #endif
   memcpy(ctx->buffer + fill, PADDING, padlen);
   fill += padlen;
@@ -365,7 +365,7 @@ MD5Final(U8* digest, MD5_CTX *ctx)
 
   MD5Transform(ctx, ctx->buffer, fill >> 6);
 #ifdef MD5_DEBUG
-  printf("       Result: %s\n", ctx_dump(ctx));
+  fprintf(stderr,"       Result: %s\n", ctx_dump(ctx));
 #endif
 
 #ifdef byteswap
@@ -400,23 +400,41 @@ static char* hex_16(unsigned char* from, char* to)
 }
 
 
-int main()
+int main(int argc, char*argv[])
 {
-    int i;
-    MD5_CTX ctx;
-    char data[3];
-    unsigned char digeststr[16];
-    char result[33];
+   MD5_CTX ctx;
+   char data[4096];
+   int size = sizeof(data);
+   unsigned char digeststr[16];
+   char result[33];
+   int n;
+   
+   FILE *f;
+   if (argc > 1) {
+      char *file = argv[1];
+      if (strcmp(file, "-") == 0)
+	f = stdin;
+      else {
+	 f = fopen(file, "rb");
+	 if (!f) {
+	    fprintf(stderr, "Can't open \"%s\"\n", file);
+	    exit(1);
+	 }
+      }
+      if (argc > 2) {
+	 size = atoi(argv[2]);
+	 if (size < 1 || size > sizeof(data))
+	   size = sizeof(data);
+      }
+   } else
+     f = stdin;
+   
+   MD5Init(&ctx);
+   while (n = fread(data, 1, size, f)) {
+      MD5Update(&ctx, data, n);
+   }
+   MD5Final(digeststr, &ctx);
 
-    memset(data, 'a', sizeof(data));
-
-    MD5Init(&ctx);
-    for (i = 0; i < 1; i++) {
-      MD5Update(&ctx, data, sizeof(data));
-    }
-    MD5Final(digeststr, &ctx);
-
-    printf("MD5=%s (%p)\n", hex_16(digeststr, result), PADDING);
-
-    return 0;
+   printf("MD5=%s\n", hex_16(digeststr, result));
+   return 0;
 }
