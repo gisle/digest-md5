@@ -51,6 +51,13 @@ Inc. MD2 Message Digest algorithm from within Perl programs.  The
 algorithm takes as input a message of arbitrary length and produces as
 output a 128-bit "fingerprint" or "message digest" of the input.
 
+The C<Digest::MD2> programming interface is identical to the interface
+of C<Digest::MD5>.
+
+=head1 SEE ALSO
+
+L<Digest::MD5>
+
 =head1 AUTHOR
 
 Gisle Aas <gisle@aas.no>
