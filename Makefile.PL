@@ -103,9 +103,9 @@ EOT
     my $rc;
     $rc = system("$cc_cmd $Config{ldflags} u32align.c $Config{libs}");
     if ($rc) {
-	print "Can't compile test program\n";
+	print "Can't compile test program.  Will ensure alignment to play safe.\n\n";
 	unlink("u32align.c", $exe, "u32align$Config{_o}");
-	return;
+	return 0;
     }
 
     $rc = system("./$exe");
@@ -124,5 +124,5 @@ EOT
 	}
 	print "signal $rc\n";
     }
-    return;
+    return 0;
 }
