@@ -77,6 +77,7 @@ int main(int argc, char** argv, char** env)
     printf("unusual byteorder, playing safe\n");
     exit(1);
 #endif
+    return 0;
 }
 /*--------------------------------------------------------------*/
 EOT
