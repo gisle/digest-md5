@@ -61,7 +61,7 @@ if ($@) {
 for (split /^/, $EXPECT) {
      my($md5hex, $file) = split ' ';
      my $base = $file;
-     print "# $base\n";
+#     print "# $base\n";
      if ($ENV{PERL_CORE}) {
          if ($file eq 'rfc1321.txt') { # Don't have it in core.
 	     print "ok ", ++$testno, " # Skip: PERL_CORE\n";
