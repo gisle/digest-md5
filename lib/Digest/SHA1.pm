@@ -34,7 +34,7 @@ sub add
 sub addfile
 {
     my $self = shift;
-    $$self->add(@_);
+    $$self->addfile(@_);
     $self;
 }
 
