@@ -2,9 +2,9 @@
 
    Release 1.99_60
 
-   We had now introduced a small compilation problems for big endian
-   systems with free U32 alignment.  Bug reported, an fix suggested by
-   Paul J. Schinder <schinder@pobox.com>.
+   The 1.99_59 release introduced compilation problems for big-endian
+   systems with free U32 alignment.  Bug reported, and fix suggested
+   by Paul J. Schinder <schinder@pobox.com>.
 
 
 
