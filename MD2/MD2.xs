@@ -4,7 +4,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the same terms as Perl itself.
  * 
- *  Copyright 1998 Gisle Aas.
+ *  Copyright 1998-2000 Gisle Aas.
  *  Copyright 1990-1992 RSA Data Security, Inc.
  *
  * This code is derived from the reference implementation in RFC 1231
@@ -183,11 +183,15 @@ MD2Final (U8* digest, MD2_CTX *context)
 }
 
 /*----------------------------------------------------------------*/
+#ifndef INT2PTR
+#define INT2PTR(any,d)	(any)(d)
+#endif
+
 
 static MD2_CTX* get_md2_ctx(SV* sv)
 {
     if (sv_derived_from(sv, "Digest::MD2"))
-	return (MD2_CTX*)SvIV(SvRV(sv));
+	return INT2PTR(MD2_CTX*, SvIV(SvRV(sv)));
     croak("Not a reference to a Digest::MD2 object");
     return (MD2_CTX*)0; /* some compilers insist on a return value */
 }
