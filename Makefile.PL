@@ -29,10 +29,9 @@ sub free_u32_alignment
 
 /* some perl headers */
 #include "EXTERN.h"
-#include "config.h"
-#include "handy.h"
+#include "perl.h"
 
-int main(int argc, char* argv[])
+int main(int argc, char** argv, char** env)
 {
 #if BYTEORDER == 0x1234 || BYTEORDER == 0x4321
     U8 buf[] = "\0\0\0\1\0\0\0\0";
