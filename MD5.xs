@@ -636,10 +636,17 @@ addfile(self, fh)
 		    XSRETURN(1);  /* self */
 	    }
 
-	    /* Process blocks until EOF */
+	    /* Process blocks until EOF or error */
             while ( (n = PerlIO_read(fh, buffer, sizeof(buffer)))) {
 	        MD5Update(context, buffer, n);
 	    }
+
+	    if (PerlIO_error(fh)) {
+		croak("Reading from filehandle failed");
+	    }
+	}
+	else {
+	    croak("No filehandle passed");
 	}
 	XSRETURN(1);  /* self */
 
