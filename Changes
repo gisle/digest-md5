@@ -1,3 +1,17 @@
+1998-10-24   Gisle Aas <aas@sn.no>
+
+   Release 1.99_54
+
+   Included HMAC_MD5.pm, contributed by Graham Barr <gbarr@ti.com>.
+
+   I have a hard time to make up my mind :-)  md5_bin() renamed back
+   to md5().   Functions are not exported by default any more.
+
+   Try to Encode/Decode with memcpy_byteswap for 32-bit big-endian
+   machines.
+
+
+
 1998-10-23   Gisle Aas <aas@sn.no>
 
    Release 1.99_53
