@@ -44,11 +44,6 @@ extern "C" {
 }
 #endif
 
-#include "patchlevel.h"
-#if PATCHLEVEL < 5 && SUBVERSION < 5
-   #define PL_na na
-#endif
-
 /*#define MD5_DEBUG /**/
 
 /* Perl does not guarantee that U32 is exactly 32 bits.  Some system
@@ -517,7 +512,8 @@ new(xclass)
 	MD5_CTX* context;
     PPCODE:
 	if (!SvROK(xclass)) {
-	    char *sclass = SvPV(xclass, PL_na);
+	    STRLEN na;
+	    char *sclass = SvPV(xclass, na);
 	    New(55, context, 1, MD5_CTX);
 	    ST(0) = sv_newmortal();
 	    sv_setref_pv(ST(0), sclass, (void*)context);
