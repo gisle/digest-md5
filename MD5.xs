@@ -473,8 +473,28 @@ b64digest(context)
 	MD5_CTX* context
     PREINIT:
 	unsigned char digeststr[16];
+        unsigned char *s = digeststr;
+        unsigned char *end = digeststr + sizeof(digeststr);
+        unsigned char c1, c2, c3;
+        static char* base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        char b64str[23];
+        char *d = b64str;
     CODE:
         MD5Final(digeststr, context);
-	RETVAL = "not_yet";
+        while (1) {
+	    c1 = *s++;
+	    *d++ = base64[c1>>2];
+	    if (s == end) {
+		*d++ = base64[(c1 & 0x3) << 4];
+		break;
+	    }
+	    c2 = *s++;
+	    c3 = *s++;
+            *d++ = base64[((c1 & 0x3) << 4) | ((c2 & 0xF0) >> 4)];
+	    *d++ = base64[((c2 & 0xF) << 2) | ((c3 & 0xC0) >>6)];
+	    *d++ = base64[c3 & 0x3F];
+    	}
+        *d = '\0';
+        RETVAL = b64str;
     OUTPUT:
 	RETVAL

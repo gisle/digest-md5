@@ -18,7 +18,7 @@ while (<FILES>) {
 
     my $md5 = MD5->new;
     $md5->addfile(\*FILE);
-    print $md5->hexdigest, "  $_\n";
+    print $md5->b64digest, "  $_\n";
 
     last if --$count < 0;
 }
