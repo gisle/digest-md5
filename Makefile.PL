@@ -22,7 +22,9 @@ push(@extra, 'INSTALLDIRS'  => 'perl') if $] >= 5.008;
 WriteMakefile(
     'NAME'	   => 'Digest::MD5',
     'VERSION_FROM' => 'MD5.pm',
-    'PREREQ_PM'    => { 'File::Spec' => 0 },
+    'PREREQ_PM'    => { 'File::Spec' => 0,
+			'Digest::base' => '1',
+		      },
     @extra,
     'dist'         => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
 );

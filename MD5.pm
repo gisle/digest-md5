@@ -13,6 +13,16 @@ require DynaLoader;
 @ISA=qw(DynaLoader);
 
 eval {
+    require Digest::base;
+    push(@ISA, 'Digest::base');
+};
+if ($@) {
+    my $err = $@;
+    *add_bits = sub { die $err };
+}
+
+
+eval {
     Digest::MD5->bootstrap($VERSION);
 };
 if ($@) {
@@ -172,6 +182,16 @@ or reset the $md5 object if this occurs.
 
 In most cases you want to make sure that the $io_handle is in
 C<binmode> before you pass it as argument to the addfile() method.
+
+=item $md5->add_bits($data, $nbits)
+
+=item $md5->add_bits($bitstring)
+
+Since the MD5 algorithm is byte oriented you might only add bits as
+multiples of 8, so you probably want to just use add() instead.  The
+add_bits() method is provided for compatibility with other digest
+implementations.  See L<Digest> for description arguments to
+add_bits().
 
 =item $md5->digest
 
