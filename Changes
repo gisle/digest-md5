@@ -1,3 +1,14 @@
+2002-12-27   Gisle Aas <gisle@ActiveState.com>
+
+   Release 2.21
+
+   Minor tweaks Sync up with bleadperl:
+     - VMS optimizer tweaks to the Makefile.PL
+     - MacOS support
+     - Added alignment test.
+
+
+
 2002-05-05   Gisle Aas <gisle@ActiveState.com>
 
    Release 2.20
