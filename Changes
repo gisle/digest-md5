@@ -1,3 +1,14 @@
+2003-12-05   Gisle Aas <gisle@ActiveState.com>
+
+   Release 2.32
+
+   Don't run u32align test program on HP-UX 10.20 as it
+   will hang.  Patch by H.Merijn Brand <h.m.brand@hccnet.nl>.
+
+   Fixed documentation typo.
+
+
+
 2003-11-28   Gisle Aas <gisle@ActiveState.com>
 
    Release 2.31
