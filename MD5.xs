@@ -562,6 +562,22 @@ new(xclass)
 	XSRETURN(1);
 
 void
+clone(self)
+	SV* self
+    PREINIT:
+	MD5_CTX* cont = get_md5_ctx(self);
+	char *myname = sv_reftype(SvRV(self),TRUE);
+	MD5_CTX* context;
+    PPCODE:
+	STRLEN my_na;
+	New(55, context, 1, MD5_CTX);
+	ST(0) = sv_newmortal();
+	sv_setref_pv(ST(0), myname , (void*)context);
+	SvREADONLY_on(SvRV(ST(0)));
+	memcpy(context,cont,sizeof(MD5_CTX));
+	XSRETURN(1);
+
+void
 DESTROY(context)
 	MD5_CTX* context
     CODE:
