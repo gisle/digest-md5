@@ -1,5 +1,13 @@
 Revision history for Perl extension MD5.
 
+   Release 1.99_51
+
+   Make MD5 subclassable.
+
+   The reset(), add() and addfile() methods now return $self.
+
+
+
 1998-10-22   Gisle Aas <aas@sn.no>
 
    Release 1.99_50

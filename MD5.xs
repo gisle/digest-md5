@@ -365,7 +365,7 @@ MD5_CTX *context;                                       /* context */
 
 static MD5_CTX* get_md5_ctx(SV* sv)
 {
-    if (sv_isa(sv, "MD5"))
+    if (sv_derived_from(sv, "MD5"))
 	return (MD5_CTX*)SvIV(SvRV(sv));
     croak("Not a reference to an MD5 object");
 }
@@ -378,14 +378,20 @@ MODULE = MD5		PACKAGE = MD5
 
 PROTOTYPES: DISABLE
 
-MD5_CTX*
-new(xclass)
+void
+new(xclass, ...)
 	SV* xclass
-    CODE:
-	New(55, RETVAL, 1, MD5_CTX);
-	MD5Init(RETVAL);
-    OUTPUT:
-	RETVAL
+    PREINIT:
+	MD5_CTX* context;
+	char *sclass = SvROK(xclass) ? sv_reftype(xclass,1) : SvPV(xclass, na);
+    PPCODE:
+	New(55, context, 1, MD5_CTX);
+	MD5Init(context);
+
+	ST(0) = sv_newmortal();
+        sv_setref_pv(ST(0), sclass, (void*)context);
+        SvREADONLY_on(SvRV(ST(0)));
+	XSRETURN(1);
 
 void
 DESTROY(context)
@@ -394,36 +400,44 @@ DESTROY(context)
         Safefree(context);
 
 void
-reset(context)
-	MD5_CTX* context
-    CODE:
+reset(self)
+	SV* self
+    PREINIT:
+	MD5_CTX* context = get_md5_ctx(self);
+    PPCODE:
 	MD5Init(context);
+	XSRETURN(1);  /* self */
+	
 
 void
-add(context, ...)
-	MD5_CTX* context
+add(self, ...)
+	SV* self
     PREINIT:
+	MD5_CTX* context = get_md5_ctx(self);
 	SV *svdata;
 	STRLEN len;
 	unsigned char *data;
 	int i;
-    CODE:
+    PPCODE:
 	for (i = 1; i < items; i++) {
 	    data = (unsigned char *)(SvPV(ST(i), len));
 	    MD5Update(context, data, len);
 	}
+	XSRETURN(1);  /* self */
 
 void
-addfile(context, fh)
-	MD5_CTX* context
+addfile(self, fh)
+	SV* self
 	InputStream fh
     PREINIT:
+	MD5_CTX* context = get_md5_ctx(self);
 	char buffer[1024];
 	int  n;
     CODE:
         while ( (n = PerlIO_read(fh, buffer, sizeof(buffer)))) {
 	    MD5Update(context, buffer, n);
 	}
+	XSRETURN(1);  /* self */
 
 SV *
 digest(context)
