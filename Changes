@@ -8,6 +8,10 @@
    DEC Compiler bug workaround.  Contributed by D Roland Walker
    <walker@ncbi.nlm.nih.gov>
 
+   Having references to a local variable called "na" was not
+   very safe either.  Some older versions of Perl can apparently
+   macroize this into something completely different.
+
 
 
 1999-02-27   Gisle Aas <gisle@aas.no>
