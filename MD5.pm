@@ -3,7 +3,7 @@ package Digest::MD5;
 use strict;
 use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = '2.12';  # $Date$
+$VERSION = '2.13';  # $Date$
 
 require Exporter;
 *import = \&Exporter::import;
@@ -259,6 +259,6 @@ licenses.
 The original MD5 interface was written by Neil Winton
 (C<N.Winton@axion.bt.co.uk>).
 
-This release was made by Gisle Aas <gisle@aas.no>
+This release was made by Gisle Aas <gisle@ActiveState.com>
 
 =cut

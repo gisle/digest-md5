@@ -1,3 +1,11 @@
+2001-03-13   Gisle Aas <gisle@ActiveState.com>
+
+   Release 2.13
+
+   Moved all other Digest:: modules out of the Digest-MD5 dist.
+
+
+
 2000-09-18   Gisle Aas <gisle@ActiveState.com>
 
    Release 2.12
