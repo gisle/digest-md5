@@ -1,3 +1,12 @@
+1999-06-28   Gisle Aas <gisle@aas.no>
+
+   Release 2.08
+
+   The addfile() methods could trigger a core dump when passed
+   a filehandle that had failed to open.
+
+
+
 1999-04-26   Gisle Aas <gisle@aas.no>
 
    Release 2.07
