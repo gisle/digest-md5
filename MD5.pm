@@ -3,7 +3,7 @@ package Digest::MD5;
 use strict;
 use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = '1.9956';  # $Date$
+$VERSION = '1.9957';  # $Date$
 
 require Exporter;
 *import = \&Exporter::import;
@@ -24,10 +24,10 @@ Digest::MD5 - Perl interface to the MD5 Message-Digest Algorithm
 
 =head1 SYNOPSIS
 
- # Procedural style
+ # Functional style
  use Digest::MD5  qw(md5 md5_hex md5_base64);
 
- $digest = unpack("H*", md5($data));
+ $digest = md5($data);
  $digest = md5_hex($data);
  $digest = md5_base64($data);
     
@@ -67,28 +67,29 @@ arbitrary data.
 
 =item I<hex>
 
-A 32 characters long string of hexadecimal digits.  This is the most
-common way to present MD5 digests.
+A 32 characters long string of (lowercase) hexadecimal digits.  This
+is the most common way to present MD5 digests.
 
 =item I<base64>
 
 A 22 character long string of printable characters.  This is the
 base64 encoded representation of the digest with the 2 bytes of
-padding removed.  The L<MIME::Base64> tells you more about this
-encoding.
+trailing padding removed.  The L<MIME::Base64> tells you more about
+this encoding.
 
 =back
 
 =head1 FUNCTIONS
 
-The following functions can be exported on request.
+The following functions can be exported.  No functions are exported by
+default.
 
 =over 4
 
 =item md5($data,...)
 
-This function will concatenate all the data given as argument as the
-message and return the binary MD5 digest.
+This function will concatenate all arguments, calculate the MD5 digest
+of this "message", and return it in binary form.
 
 =item md5_hex($data,...)
 
@@ -106,11 +107,11 @@ The following methods are available:
 
 =over 4
 
-=item $md5 = MD5->new
+=item $md5 = Digest::MD5->new
 
-The constructor returns a new C<MD5> object which encapsulate the
-state of the MD5 message-digest algorithm.  You can add data to the
-object and finally ask for the digest.
+The constructor returns a new C<Digest::MD5> object which encapsulate
+the state of the MD5 message-digest algorithm.  You can add data to
+the object and finally ask for the digest.
 
 If called as a instance method (i.e. $md5->new) it will just reset the
 state the object to the state of a newly created object.  No new
@@ -133,10 +134,12 @@ object itself.
 
 =item $md5->digest
 
-Return the binary digest for the message.  Note that the C<digest>
-operation is effectively a destructive, read-once operation. Once it
-has been performed, the MD5 context object must be C<reset> before
-being used to calculate another digest value.
+Return the binary digest for the message.
+
+Note that the C<digest> operation is effectively a destructive,
+read-once operation. Once it has been performed, the C<Digest::MD5>
+object is automatically C<reset> and can be used to calculate another
+digest value.
 
 =item $md5->hexdigest
 
@@ -205,7 +208,7 @@ Or we can use the builtin addfile method to read the file much faster:
 
 =head1 SEE ALSO
 
-L<Digest::SHA1>,
+L<SHA>,
 L<Digest::HMAC>,
 L<MIME::Base64>
 
