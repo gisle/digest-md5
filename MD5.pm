@@ -212,6 +212,10 @@ L<SHA>,
 L<Digest::HMAC>,
 L<MIME::Base64>
 
+L<md5sum(1)>
+
+RFC 1321
+
 =head1 COPYRIGHT
 
 This library is free software; you can redistribute it and/or
