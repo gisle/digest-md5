@@ -34,11 +34,24 @@ WriteMakefile(
 sub free_u32_alignment
 {
     $|=1;
+    if (exists $Config{d_u32align}) {
+       print "Perl's config says that U32 access must ";
+       print "not " unless $Config{d_u32align};
+       print "be aligned.\n";
+       return !$Config{d_u32align};
+    }
+    
+    if ($^O eq 'VMS' || $^O eq 'MSWin32') {
+       print "Assumes that $^O implies free alignment for U32 access.\n";
+       return 1;
+    }
+    
+    if ($^O eq 'hpux' && $Config{osvers} < 11.0) {
+       print "Will not test for free alignment on older HP-UX.\n";
+       return 0;
+    }
+    
     print "Testing alignment requirements for U32... ";
-    return 1 if $^O eq 'VMS';
-    return 1 if $^O eq 'MSWin32';
-    return 0 if $^O eq 'hpux' && $Config{osvers} < 11.0;
-
     open(ALIGN_TEST, ">u32align.c") or die "$!";
     print ALIGN_TEST <<'EOT'; close(ALIGN_TEST);
 /*--------------------------------------------------------------*/
