@@ -33,7 +33,7 @@ Digest::MD5 - Perl interface to the MD5 Message-Digest Algorithm
     
 
  # OO style
- use Digest::MD5 ();
+ use Digest::MD5;
 
  $ctx = Digest::MD5->new;
 
@@ -165,7 +165,7 @@ The above example would print out the message
 provided that the implementation is working correctly.  The same
 checksum can also be calculated in OO style:
 
-    use Digest::MD5 ();
+    use Digest::MD5;
     
     $md5 = Digest::MD5->new;
     $md5->add('foo', 'bar');
@@ -180,7 +180,7 @@ We can handle messages of any size.
 
 This is useful when calculating checksum for files:
 
-    use Digest::MD5 ();
+    use Digest::MD5;
 
     my $file = shift || "/etc/passwd";
     open(FILE, $file) or die "Can't open '$file': $!";
@@ -195,7 +195,7 @@ This is useful when calculating checksum for files:
 
 Or we can use the builtin addfile method to read the file much faster:
 
-    use Digest::MD5 ();
+    use Digest::MD5;
 
     my $file = shift || "/etc/passwd";
     open(FILE, $file) or die "Can't open '$file': $!";
@@ -250,7 +250,7 @@ documentation and/or software.
 
 This copyright does not prohibit distribution of any version of Perl
 containing this extension under the terms of the GNU or Artistic
-licences.
+licenses.
 
 =head1 AUTHORS
 
