@@ -1,5 +1,14 @@
 1998-10-25   Gisle Aas <aas@sn.no>
 
+   Release 1.99_56
+
+   Fix memcpy_byteswap() function in MD5.xs.  Must be careful with
+   htovl() as it might evaluate its arguments more than once.
+
+
+
+1998-10-25   Gisle Aas <aas@sn.no>
+
    Release 1.99_55
 
    Grahams HMAC_MD5.pm splitted into two modules.  Digest::HMAC and
