@@ -28,7 +28,7 @@ sub free_u32_alignment
 /*  This program allocates a buffer of U8 (char) and then tries */
 /*  to access it through a U32 pointer at every offset.  The    */
 /*  program  is expected to die with a bus error/seg fault for  */
-/*  machines that does not support unaligned integer read/write */
+/*  machines that do not support unaligned integer read/write   */
 /*--------------------------------------------------------------*/
 
 #include <stdio.h>
