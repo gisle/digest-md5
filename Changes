@@ -1,3 +1,15 @@
+1998-11-04   Gisle Aas <aas@sn.no>
+
+   Release 2.00.
+
+   Taken out Digest::SHA1 as this module will be provided from Uwe
+   Hollerbach later.
+
+   Some tweaks to MD2.xs and MD5.xs since "na" disappeared in
+   perl5.005_53
+
+
+
 1998-10-30   Gisle Aas <aas@sn.no>
 
    Release 1.99_60
