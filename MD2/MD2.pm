@@ -20,7 +20,7 @@ __END__
 
 =head1 NAME
 
-Digest::MD2 - Perl interface to the MD2 Message-Digest Algorithm
+Digest::MD2 - Perl interface to the MD2 Algorithm
 
 =head1 SYNOPSIS
 
