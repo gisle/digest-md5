@@ -3,7 +3,7 @@
 
 //#define MD5_DEBUG
 
-#define BYTEORDER 0x1234
+#define BYTEORDER 0x12345
 
 typedef unsigned int U32;
 typedef unsigned char U8;
@@ -49,13 +49,10 @@ static void u2s(U32 u, U8* s)
     *s   = (u >> 24) & 0xFF;
 }
 
-static void s2u(const U8* s, U32* u)
-{
-    *u =  (U32)(*s)            |
-         ((U32)(*(s+1)) << 8)  |
-         ((U32)(*(s+2)) << 16) |
-         ((U32)(*(s+3)) << 24);
-}
+#define s2u(s,u) ((u) =  (U32)(*s)            |  \
+                        ((U32)(*(s+1)) << 8)  |  \
+                        ((U32)(*(s+2)) << 16) |  \
+                        ((U32)(*(s+3)) << 24))
 
 #endif                        /* endianness test */
 
@@ -157,7 +154,7 @@ MD5Init(MD5_CTX *ctx)
 }
 
 static void
-MD5Transform(MD5_CTX* ctx, const void* buf, STRLEN blocks)
+MD5Transform(MD5_CTX* ctx, const U8* buf, STRLEN blocks)
 {
   static int tcount = 0;
 
@@ -166,7 +163,7 @@ MD5Transform(MD5_CTX* ctx, const void* buf, STRLEN blocks)
   U32 C = ctx->C;
   U32 D = ctx->D;
 
-  const U32 *x = buf;  /* really just type casting */
+  const U32 *x = (U32*)buf;  /* really just type casting */
 
   while(blocks--) {
     U32 a = A;
@@ -178,13 +175,13 @@ MD5Transform(MD5_CTX* ctx, const void* buf, STRLEN blocks)
     const U32 *X = x;
     #define NEXTx  (*x++)
 #else
-    U32 X[16];
+    U32 X[16];      /* converted values, used in round 2-4 */
     U32 *uptr = X;
     U32 tmp;
     #ifdef byteswap
       #define NEXTx  (tmp=*x++, *uptr++ = byteswap(tmp))
     #else
-      #define NEXTx  (s2u(buf,&tmp), buf += 4, *uptr++ = tmp)
+      #define NEXTx  (s2u(buf,tmp), buf += 4, *uptr++ = tmp)
     #endif
 #endif
 
