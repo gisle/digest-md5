@@ -39,6 +39,7 @@ extern "C" {
 }
 #endif
 
+#include "patchlevel.h"
 #if PATCHLEVEL < 5 && SUBVERSION < 5
    #define PL_na na
 #endif
