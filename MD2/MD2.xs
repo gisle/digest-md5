@@ -46,10 +46,11 @@ typedef struct {
   unsigned char buffer[16];                         /* input buffer */
 } MD2_CTX;
 
+
 /* Permutation of 0..255 constructed from the digits of pi. It gives a
    "random" nonlinear byte substitution operation.
  */
-static unsigned char PI_SUBST[256] = {
+static U8 PI_SUBST[256] = {
   41, 46, 67, 201, 162, 216, 124, 1, 61, 54, 84, 161, 236, 240, 6,
   19, 98, 167, 5, 243, 192, 199, 115, 140, 152, 147, 43, 217, 188,
   76, 130, 202, 30, 155, 87, 60, 253, 212, 224, 22, 103, 66, 111, 24,
@@ -70,141 +71,118 @@ static unsigned char PI_SUBST[256] = {
   31, 26, 219, 153, 141, 51, 159, 17, 131, 20
 };
 
-static unsigned char *PADDING[] = {
-  (unsigned char *)"",
-  (unsigned char *)"\001",
-  (unsigned char *)"\002\002",
-  (unsigned char *)"\003\003\003",
-  (unsigned char *)"\004\004\004\004",
-  (unsigned char *)"\005\005\005\005\005",
-  (unsigned char *)"\006\006\006\006\006\006",
-  (unsigned char *)"\007\007\007\007\007\007\007",
-  (unsigned char *)"\010\010\010\010\010\010\010\010",
-  (unsigned char *)"\011\011\011\011\011\011\011\011\011",
-  (unsigned char *)"\012\012\012\012\012\012\012\012\012\012",
-  (unsigned char *)"\013\013\013\013\013\013\013\013\013\013\013",
-  (unsigned char *)"\014\014\014\014\014\014\014\014\014\014\014\014",
-  (unsigned char *)
-    "\015\015\015\015\015\015\015\015\015\015\015\015\015",
-  (unsigned char *)
-    "\016\016\016\016\016\016\016\016\016\016\016\016\016\016",
-  (unsigned char *)
-    "\017\017\017\017\017\017\017\017\017\017\017\017\017\017\017",
-  (unsigned char *)
-    "\020\020\020\020\020\020\020\020\020\020\020\020\020\020\020\020"
+static U8 *PADDING[] = {
+  (U8 *)"",
+  (U8 *)"\001",
+  (U8 *)"\002\002",
+  (U8 *)"\003\003\003",
+  (U8 *)"\004\004\004\004",
+  (U8 *)"\005\005\005\005\005",
+  (U8 *)"\006\006\006\006\006\006",
+  (U8 *)"\007\007\007\007\007\007\007",
+  (U8 *)"\010\010\010\010\010\010\010\010",
+  (U8 *)"\011\011\011\011\011\011\011\011\011",
+  (U8 *)"\012\012\012\012\012\012\012\012\012\012",
+  (U8 *)"\013\013\013\013\013\013\013\013\013\013\013",
+  (U8 *)"\014\014\014\014\014\014\014\014\014\014\014\014",
+  (U8 *)"\015\015\015\015\015\015\015\015\015\015\015\015\015",
+  (U8 *)"\016\016\016\016\016\016\016\016\016\016\016\016\016\016",
+  (U8 *)"\017\017\017\017\017\017\017\017\017\017\017\017\017\017\017",
+  (U8 *)"\020\020\020\020\020\020\020\020\020\020\020\020\020\020\020\020"
 };
 
 
 static void
 MD2Init(MD2_CTX* context)
 {
-  Zero(context, 1, MD2_CTX);
-  context->count = 0;
+    Zero(context, 1, MD2_CTX);
+    context->count = 0;
 }
+
 
 static void
-MD2Transform (state, checksum, block)
-unsigned char state[16];
-unsigned char checksum[16];
-unsigned char block[16];
+MD2Transform (U8* state, U8* checksum, U8* block)
 {
-  unsigned int i, j, t;
-  unsigned char x[48];
+    unsigned int i, j, t;
+    U8 x[48];
 
-  /* Form encryption block from state, block, state ^ block.
-   */
-  Copy(state, x, 16, char);
-//  MD2_memcpy ((POINTER)x, (POINTER)state, 16);
-  Copy(block, x+16, 16, char);
-//  MD2_memcpy ((POINTER)x+16, (POINTER)block, 16);
-  for (i = 0; i < 16; i++)
-    x[i+32] = state[i] ^ block[i];
+    /* Form encryption block from state, block, state ^ block.
+     */
+    Copy(state, x, 16, char);
+    Copy(block, x+16, 16, char);
 
-  /* Encrypt block (18 rounds).
-   */
-  t = 0;
-  for (i = 0; i < 18; i++) {
-    for (j = 0; j < 48; j++)
-      t = x[j] ^= PI_SUBST[t];
-    t = (t + i) & 0xff;
-  }
+    for (i = 0; i < 16; i++)
+	x[i+32] = state[i] ^ block[i];
 
-  /* Save new state */
-  Copy(x, state, 16, char);
-//  MD2_memcpy ((POINTER)state, (POINTER)x, 16);
+    /* Encrypt block (18 rounds).
+     */
+    t = 0;
+    for (i = 0; i < 18; i++) {
+	for (j = 0; j < 48; j++)
+	    t = x[j] ^= PI_SUBST[t];
+	t = (t + i) & 0xff;
+    }
 
-  /* Update checksum.
-   */
-  t = checksum[15];
-  for (i = 0; i < 16; i++)
-    t = checksum[i] ^= PI_SUBST[block[i] ^ t];
+    Copy(x, state, 16, char);     /* Save new state */
 
-  /* Zeroize sensitive information.
-   */
-   Zero(x, 1, x);
-//  MD2_memset ((POINTER)x, 0, sizeof (x));
+    /* Update checksum.
+     */
+    t = checksum[15];
+    for (i = 0; i < 16; i++)
+	t = checksum[i] ^= PI_SUBST[block[i] ^ t];
+
+    Zero(x, 1, x);     /* Zeroize sensitive information. */
 }
+
 
 static void
 MD2Update (MD2_CTX* context, U8 *input, STRLEN inputLen)
 {
-  unsigned int i, index, partLen;
+    unsigned int i, index, partLen;
 
-  /* Update number of bytes mod 16 */
-  index = context->count;
-  context->count = (index + inputLen) & 0xf;
+    /* Update number of bytes mod 16 */
+    index = context->count;
+    context->count = (index + inputLen) & 0xf;
 
-  partLen = 16 - index;
+    partLen = 16 - index;
 
-  /* Transform as many times as possible.
-    */
-  if (inputLen >= partLen) {
-//    MD2_memcpy
-//      ((POINTER)&context->buffer[index], (POINTER)input, partLen);
-      Copy(input, context->buffer+index, partLen, char);
-    MD2Transform (context->state, context->checksum, context->buffer);
+    /* Transform as many times as possible.
+     */
+    if (inputLen >= partLen) {
+	Copy(input, context->buffer+index, partLen, char);
+	MD2Transform (context->state, context->checksum, context->buffer);
 
-    for (i = partLen; i + 15 < inputLen; i += 16)
-      MD2Transform (context->state, context->checksum, &input[i]);
+	for (i = partLen; i + 15 < inputLen; i += 16)
+	    MD2Transform (context->state, context->checksum, &input[i]);
 
-    index = 0;
-  }
-  else
-    i = 0;
+	index = 0;
+    }
+    else
+	i = 0;
 
-  /* Buffer remaining input */
-   Copy(input+i, context->buffer + index, inputLen-i, char);
-//  MD2_memcpy
-//    ((POINTER)&context->buffer[index], (POINTER)&input[i],
-//     inputLen-i);
+    /* Buffer remaining input */
+    Copy(input+i, context->buffer + index, inputLen-i, char);
 }
+
 
 static void
 MD2Final (U8* digest, MD2_CTX *context)
 {
-  unsigned int index, padLen;
+    unsigned int index, padLen;
 
-  /* Pad out to multiple of 16.
-   */
-  index = context->count;
-  padLen = 16 - index;
-  MD2Update (context, PADDING[padLen], padLen);
+    /* Pad out to multiple of 16 */
+    index = context->count;
+    padLen = 16 - index;
+    MD2Update (context, PADDING[padLen], padLen);
 
-  /* Extend with checksum */
-  MD2Update (context, context->checksum, 16);
+    /* Extend with checksum */
+    MD2Update (context, context->checksum, 16);
 
-  /* Store state in digest */
-   Copy(context->state, digest, 16, char);
-//  MD2_memcpy ((POINTER)digest, (POINTER)context->state, 16);
-
-  /* Zeroize sensitive information.
-   */
-   Zero(context, 1, MD2_CTX);
-//  MD2_memset ((POINTER)context, 0, sizeof (*context));
-    
+    Copy(context->state, digest, 16, char);      /* Store state in digest */
+    Zero(context, 1, MD2_CTX);          /* Zeroize sensitive information. */
 }
 
-
+/*----------------------------------------------------------------*/
 
 static MD2_CTX* get_md2_ctx(SV* sv)
 {
