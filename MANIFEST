@@ -2,10 +2,14 @@ README			Guess what?
 MANIFEST		This file
 MD5.pm			Digest::MD5 Perl Module
 lib/MD5.pm		MD5 backwards compatibility stuff
+lib/Digest/HMAC.pm      HMAC implementation
+lib/Digest/HMAC_MD5.pm  HMAC using MD5
 MD5.xs			MD5 Perl 'XS' source file
 typemap			Supplementary typemap
 Makefile.PL		Perl Makefile builder
-rfc1321.txt		RFC 1321 "The MD5 Message-Digest Algorithm"
+rfc1321.txt		The MD5 Message-Digest Algorithm
+rfc2104.txt		HMAC: Keyed-Hashing for Message Authentication
+rfc2202.txt		Test Cases for HMAC-MD5 and HMAC-SHA-1
 t/files.t		Check a few files.
 t/md5.t			Test suite using standard Perl conventions
 Changes			Version history
