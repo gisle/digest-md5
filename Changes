@@ -1,3 +1,13 @@
+2001-08-27   Gisle Aas <gisle@ActiveState.com>
+
+   Release 2.15
+
+   Avoid exit() in Makefile.PL and bleedperls redefinition of printf
+   in the alignment test program.
+   Patch by Doug MacEachern <dougm@covalent.net>.
+
+
+
 2001-07-18   Gisle Aas <gisle@ActiveState.com>
 
    Release 2.14
