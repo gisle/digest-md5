@@ -1,10 +1,40 @@
-1998-10-26   Gisle Aas <aas@sn.no>
+1998-10-27   Gisle Aas <aas@sn.no>
 
    Release 1.99_57
 
-   Documentation update
+   Rewritten most of the MD5 C code to make it real fast (especially
+   on little-endian machines).  Compared to MD5-1.7 we can process
+   files 4 times as fast and we digest small stuff in memory 7 times
+   faster.  I came to these conclusions after these tests (gcc -O2,
+   i586, Linux):
 
-   Got rid of the memcpy_byteswap() stuff.  It kept failing.
+   First tested calculation of the digest of a 31 MB file, using
+   perl -le 'print Digest::MD5->new->addfile(*STDIN)->hexdigest'
+   and similar stuff:
+
+      MD5-1.7:                 21.06s
+      Digest::MD5-1.99_57:      5.23s
+      md5sum (GNU textutils):   4.90s
+
+   As you can see, we do nearly as good as the md5sum program.  I
+   think the reason we don't beat md5sum is that perl always insist on
+   loading extra modules like Config.pm, Carp.pm, strict.pm, vars.pm,
+   AutoLoader.pm and DynaLoader.pm.  When I simply wrapped the MD5.xs
+   hasher code in a C program I managed to process the file in 4.68s.
+
+   Then we calculated the digest of the same 6 byte sting, 20000
+   times:
+
+      MD5-1.7:                 11.81s
+      Digest::MD5-1.99_57:      1.68s
+
+   Digest::MD5 benefit from making this into a plain procedure call
+   instead of a static method call.
+
+
+   Other changes in this release are:
+
+   Documentation update
 
    Internal MD5.xs cleanup.
 
@@ -13,9 +43,11 @@
    Digest::HMAC methods add() and addfile() did not return the
    corret object.
 
-   Added Digest.pm loading module
+   Added Digest.pm loading module.  I am not sure this is a good idea.
 
-   Added Digest::SHA1 and Digest::HMAC_SHA1 module
+   Added Digest::SHA1 and Digest::HMAC_SHA1 module.  The Digest::SHA1
+   module is just a wrapper around SHA.pm.  I hope to get the author
+   of SHA.pm to move his module to the Digest:: category.
 
 
 
