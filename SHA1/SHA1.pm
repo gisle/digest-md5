@@ -3,7 +3,7 @@ package Digest::SHA1;
 use strict;
 use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = '1.02';  # $Date$
+$VERSION = '1.03';  # $Date$
 
 require Exporter;
 *import = \&Exporter::import;
@@ -30,7 +30,7 @@ Digest::SHA1 - Perl interface to the SHA-1 Algorithm
  $digest = sha1($data);
  $digest = sha1_hex($data);
  $digest = sha1_base64($data);
-    
+
 
  # OO style
  use Digest::SHA1;
@@ -110,7 +110,7 @@ http://www.itl.nist.gov/fipspubs/fip180-1.htm
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
- Copyright 1999 Gisle Aas.
+ Copyright 1999-2000 Gisle Aas.
  Copyright 1997 Uwe Hollerbach.
 
 =head1 AUTHORS
