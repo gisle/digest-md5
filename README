@@ -6,8 +6,8 @@ MD2, as well as NIST SHA-1, Message Digest algorithms.  This package
 also provide modules which calculate HMAC digests.
 
 To build the extensions, unpack this distribution somewhere, create
-the Makefile using 'perl Makefile.PL' and do a 'make', 'make test',
-and if successful 'make install'.
+the Makefile by running 'perl Makefile.PL' and do a 'make', 'make
+test', and if successful 'make install'.
 
 You will need perl version 5.004 or better to install these modules.
 Further documentation is embedded in the individual modules.
