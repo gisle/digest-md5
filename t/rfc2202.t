@@ -51,6 +51,21 @@ use Digest::HMAC_MD5 qw(hmac_md5);
 print "\n# HMAC-MD5 tests\n";
 foreach (@{$case{"HMAC-MD5"}}) {
     $testno++;
+
+    # This is a temporary workaround necessitated by a DEC
+    # compiler bug which breaks the 'x' operator.  See
+    #
+    #  http://www.xray.mpe.mpg.de/mailing-lists/perl5-porters/1998-12/msg01720.html
+    #
+    if ($^O eq 'dec_osf' and $] < 5.00503) {
+      require Config;
+      my $temp=\%Config::Config;  # suppress a silly warning
+      if ($testno =~ /^(?:3|4|6|7)$/ and ! $Config::Config{gccversion}) {
+        print "ok $testno # skipping test on this platform\n";
+        next;
+      }
+    }
+
     #use Data::Dumper; print Dumper($_);
     warn unless length($_->{key}) == $_->{key_len};
     warn unless length($_->{data}) == $_->{data_len};
