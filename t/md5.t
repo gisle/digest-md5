@@ -51,8 +51,8 @@ foreach (sort(keys(%data)))
 	$failed++;
     }
 
-    if (Digest::MD5::md5_bin($_) ne $digest) {
-	print STDERR "md5_bin($_) failed\n";
+    if (Digest::MD5::md5($_) ne $digest) {
+	print STDERR "md5($_) failed\n";
 	$failed++;
     }
 
