@@ -1,3 +1,24 @@
+1998-10-26   Gisle Aas <aas@sn.no>
+
+   Release 1.99_57
+
+   Documentation update
+
+   Got rid of the memcpy_byteswap() stuff.  It kept failing.
+
+   Internal MD5.xs cleanup.
+
+   $md5->digest will automatically reset now.
+
+   Digest::HMAC methods add() and addfile() did not return the
+   corret object.
+
+   Added Digest.pm loading module
+
+   Added Digest::SHA1 and Digest::HMAC_SHA1 module
+
+
+
 1998-10-25   Gisle Aas <aas@sn.no>
 
    Release 1.99_56
