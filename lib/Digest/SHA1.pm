@@ -46,8 +46,7 @@ sub digest
 
 sub hexdigest
 {
-    my $self = shift;
-    $$self->hexdigest(@_);
+    unpack("H*", shift->digest);
 }
 
 sub b64digest
