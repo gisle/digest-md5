@@ -20,7 +20,7 @@ __END__
 
 =head1 NAME
 
-Digest::MD5 - Perl interface to the MD5 Message-Digest Algorithm
+Digest::MD5 - Perl interface to the MD5 Algorithm
 
 =head1 SYNOPSIS
 
@@ -55,34 +55,13 @@ The C<Digest::MD5> module provide a procedural interface for simple
 use, as well as an object oriented interface that can handle messages
 of arbitrary length and which can read files directly.
 
-The digest can be delivered in three formats:
-
-=over 8
-
-=item I<binary>
-
-16 bytes of binary data.  This is the most compact form, but it is not
-well suited for printing or embedding in places that can't handle
-arbitrary data.
-
-=item I<hex>
-
-A 32 characters long string of (lowercase) hexadecimal digits.  This
-is the most common way to present MD5 digests.
-
-=item I<base64>
-
-A 22 character long string of printable characters.  This is the
-base64 encoded representation of the digest with the 2 bytes of
-trailing padding removed.  The L<MIME::Base64> tells you more about
-this encoding.
-
-=back
+A binary digest will be 16 bytes long.  A hex digest will be 32
+characters long.  A base64 digest will be 22 characters long.
 
 =head1 FUNCTIONS
 
-The following functions can be exported.  No functions are exported by
-default.
+The following functions can be exported from the C<Digest::MD5>
+module.  No functions are exported by default.
 
 =over 4
 
@@ -208,9 +187,10 @@ Or we can use the builtin addfile method to read the file much faster:
 
 =head1 SEE ALSO
 
-L<SHA>,
-L<Digest::HMAC>,
-L<MIME::Base64>
+L<Digest>,
+L<Digest::MD2>,
+L<Digest::SHA1>,
+L<Digest::HMAC>
 
 L<md5sum(1)>
 
