@@ -146,22 +146,6 @@ static unsigned char PADDING[64] = {
 #define Encode(output, input, len)  Copy(input, output, len, char)
 #define Decode(output, input, len)  Copy(input, output, len, char)
 
-#elif BYTEORDER == 0x4321 && defined(HAS_HTOVL)  /* 32bit big endian */
-
-static void memcpy_byteswap(long *dest, const long* src, unsigned int len)
-{
-    len /= 4;
-    while (len--) {
-	*dest++ = htovl(*src);
-	src++;
-    }
-}
-
-#define MEMCPY_BYTESWAP(d,s,l) memcpy_byteswap((long*)(d), (long*)(s), (l))
-
-#define Encode MEMCPY_BYTESWAP
-#define Decode MEMCPY_BYTESWAP
-
 #else
 
 /* Encodes input (UINT4) into output (unsigned char). Assumes len is
