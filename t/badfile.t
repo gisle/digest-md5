@@ -1,3 +1,6 @@
+# Digest::MD5 2.07 and older used to trigger a core dump when
+# passed an illegal file handle that failed to open.
+
 print "1..2\n";
 
 use Digest::MD5 ();
