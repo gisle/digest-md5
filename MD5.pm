@@ -148,7 +148,8 @@ following should all give the same result:
     use MD5;
     $md5 = new MD5;
 
-    die "Can't open /etc/passwd ($!)\n" unless open(P, "/etc/passwd");
+    open(P, "/etc/passwd") or die "Can't open /etc/passwd ($!)\n";
+    binmode(P);
 
     seek(P, 0, 0);
     $md5->reset;
