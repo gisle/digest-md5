@@ -1,3 +1,15 @@
+1999-03-05   Gisle Aas <gisle@aas.no>
+
+   Release 2.04
+
+   Avoid the -o option when compiling alignment test program
+   for Win32 as suggested by Gurusamy Sarathy.
+
+   DEC Compiler bug workaround.  Contributed by D Roland Walker
+   <walker@ncbi.nlm.nih.gov>
+
+
+
 1999-02-27   Gisle Aas <gisle@aas.no>
 
    Release 2.03
