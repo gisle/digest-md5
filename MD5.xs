@@ -44,6 +44,11 @@ extern "C" {
 }
 #endif
 
+#include "patchlevel.h"
+#if PATCHLEVEL <= 4 && !defined(PL_dowarn)
+   #define PL_dowarn dowarn
+#endif
+
 /*#define MD5_DEBUG /**/
 
 /* Perl does not guarantee that U32 is exactly 32 bits.  Some system
@@ -617,6 +622,14 @@ md5(...)
 	unsigned char digeststr[16];
     PPCODE:
 	MD5Init(&ctx);
+	if (PL_dowarn && items > 1) {
+	    data = SvPV(ST(0), len);
+	    if (len == 11 && memEQ("Digest::MD5", data, 11)) {
+	         char *f = (ix == F_BIN) ? "md5" :
+                           (ix == F_HEX) ? "md5_hex" : "md5_base64";
+	         warn("&Digest::MD5::%s function probably called as method", f);
+            }
+	}
 	for (i = 0; i < items; i++) {
 	    data = (unsigned char *)(SvPV(ST(i), len));
 	    MD5Update(&ctx, data, len);
