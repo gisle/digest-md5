@@ -30,3 +30,41 @@ sub hmac_sha1_hex
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Digest::HMAC_SHA1 - Keyed-Hashing for Message Authentication
+
+=head1 SYNOPSIS
+
+ # Functional style
+ use Digest::HMAC_SHA1 qw(hmac_sha1 hmac_sha1_hex);
+ $digest = hmac_sha1($data, $key);
+ print hmac_sha1_hex($data, $key);
+
+ # OO style
+ use Digest::HMAC_SHA1;
+ $hmac = Digest::HMAC_SHA1->new($key);
+
+ $hmac->add($data);
+ $hmac->addfile(*FILE);
+
+ $digest = $hmac->digest;
+ $digest = $hmac->hexdigest;
+ $digest = $hmac->b64digest;
+
+=head1 DESCRIPTION
+
+This module provide HMAC-SHA-1 hashing.
+
+=head1 SEE ALSO
+
+L<Digest::HMAC>, L<Digest::SHA1>, L<Digest::HMAC_MD5>
+
+=head1 AUTHOR
+
+Gisle Aas <gisle@aas.no>
+
+=cut

@@ -62,3 +62,50 @@ sub hmac
 sub hmac_hex { unpack("H*", &hmac); }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Digest::HMAC - Keyed-Hashing for Message Authentication
+
+=head1 SYNOPSIS
+
+ # Functional style
+ use Digest::HMAC qw(hmac hmac_hex);
+ $digest = hmac($data, $key, \&myhash);
+ print hmac_hex($data, $key, \&myhash);
+
+ # OO style
+ use Digest::HMAC;
+ $hmac = Digest::HMAC->new($key, "Digest::MyHash");
+
+ $hmac->add($data);
+ $hmac->addfile(*FILE);
+
+ $digest = $hmac->digest;
+ $digest = $hmac->hexdigest;
+ $digest = $hmac->b64digest;
+
+=head1 DESCRIPTION
+
+HMAC is used for message integrity checks between two parties that
+share a secret key, and works in combination with some other Digest
+algorithm, usually MD5 or SHA-1.  The HMAC mechanism is described in
+RFC 2104.
+
+HMAC follow the common C<Digest::> interface, but the constructor
+takes the secret key and the name of some other simple C<Digest::>
+as argument.
+
+=head1 SEE ALSO
+
+L<Digest::HMAC_MD5>, L<Digest::HMAC_SHA1>
+
+RFC 2104
+
+=head1 AUTHORS
+
+Graham Barr <gbarr@ti.com>, Gisle Aas <gisle@aas.no>
+
+=cut
