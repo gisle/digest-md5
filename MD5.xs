@@ -577,7 +577,7 @@ addfile(self, fh)
 	}
 	XSRETURN(1);  /* self */
 
-SV *
+void
 digest(context)
 	MD5_CTX* context
     ALIAS:
@@ -592,7 +592,7 @@ digest(context)
         ST(0) = make_mortal_sv(digeststr, ix);
         XSRETURN(1);
 
-SV*
+void
 md5(...)
     ALIAS:
 	Digest::MD5::md5        = F_BIN

@@ -332,7 +332,7 @@ addfile(self, fh)
 	}
 	XSRETURN(1);  /* self */
 
-SV *
+void
 digest(context)
 	MD2_CTX* context
     ALIAS:
@@ -347,7 +347,7 @@ digest(context)
         ST(0) = make_mortal_sv(digeststr, ix);
         XSRETURN(1);
 
-SV*
+void
 md2(...)
     ALIAS:
 	Digest::MD2::md2        = F_BIN
