@@ -1,6 +1,3 @@
-# Before `make install' is performed this script should be runnable with
-# `make test'. After `make install' it should work as `perl test.pl'
-
 ######################### We start with some black magic to print on failure.
 
 # Change 1..1 below to 1..last_test_to_print .
@@ -54,12 +51,12 @@ foreach (sort(keys(%data)))
 	$failed++;
     }
 
-    if (MD5::md5($_) ne $digest) {
+    if (Digest::MD5::md5($_) ne $digest) {
 	print STDERR "md5($_) failed\n";
 	$failed++;
     }
 
-    if (MD5::md5_hex($_) ne $hex) {
+    if (Digest::MD5::md5_hex($_) ne $hex) {
 	print STDERR "md5_hex($_) failed\n";
 	$failed++;
     }
