@@ -426,6 +426,7 @@ static MD5_CTX* get_md5_ctx(SV* sv)
     if (sv_derived_from(sv, "Digest::MD5"))
 	return (MD5_CTX*)SvIV(SvRV(sv));
     croak("Not a reference to a Digest::MD5 object");
+    return (MD5_CTX*)0; /* some compilers insist on a return value */
 }
 
 
@@ -555,7 +556,7 @@ addfile(self, fh)
     PREINIT:
 	MD5_CTX* context = get_md5_ctx(self);
 	STRLEN fill = context->bytes_low & 0x3F;
-	char buffer[4096];
+	unsigned char buffer[4096];
 	int  n;
     CODE:
         if (fill) {

@@ -194,6 +194,7 @@ static MD2_CTX* get_md2_ctx(SV* sv)
     if (sv_derived_from(sv, "Digest::MD2"))
 	return (MD2_CTX*)SvIV(SvRV(sv));
     croak("Not a reference to a Digest::MD2 object");
+    return (MD2_CTX*)0; /* some compilers insist on a return value */
 }
 
 
@@ -322,7 +323,7 @@ addfile(self, fh)
 	InputStream fh
     PREINIT:
 	MD2_CTX* context = get_md2_ctx(self);
-	char buffer[4096];
+	unsigned char buffer[4096];
 	int  n;
     CODE:
 	/* Process blocks until EOF */
