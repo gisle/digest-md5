@@ -1,3 +1,13 @@
+1998-10-30   Gisle Aas <aas@sn.no>
+
+   Release 1.99_60
+
+   We had now introduced a small compilation problems for big endian
+   systems with free U32 alignment.  Bug reported, an fix suggested by
+   Paul J. Schinder <schinder@pobox.com>.
+
+
+
 1998-10-28   Gisle Aas <aas@sn.no>
 
    Release 1.99_59
@@ -32,10 +42,10 @@
    Release 1.99_57
 
    Rewritten most of the MD5 C code to make it real fast (especially
-   on little-endian machines).  Compared to MD5-1.7 we can process
-   files 4 times as fast and we digest small stuff in memory 7 times
-   faster.  I came to these conclusions after these tests (gcc -O2,
-   i586, Linux):
+   on little-endian machines without alignment restrictions for U32).
+   Compared to MD5-1.7 we can process files 4 times as fast and we
+   digest small stuff in memory 7 times faster.  I came to these
+   conclusions after these tests (gcc -O2, i586, Linux):
 
    First tested calculation of the digest of a 31 MB file, using
    perl -le 'print Digest::MD5->new->addfile(*STDIN)->hexdigest'
