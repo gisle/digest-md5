@@ -1,3 +1,15 @@
+2000-08-18   Gisle Aas <gisle@ActiveState.com>
+
+   Release 2.10
+
+   Digest::MD5 will now try to fallback to the pure perl
+   implementation of Digest::Perl::MD5 if bootstrap fails.
+
+   Added a bit internal paranoia about casting the IV
+   in the Digest::MD5 object to the MD5_CTX* pointer.
+
+
+
 1999-08-06   Gisle Aas <gisle@aas.no>
 
    Release 2.09
