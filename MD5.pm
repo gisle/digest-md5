@@ -121,6 +121,9 @@ The $io_handle is read until EOF and the content is appended to the
 message we calculate the digest for.  The return value is the $md5
 object itself.
 
+In most cases you want to make sure that the $io_handle is set up to
+be in binmode().
+
 =item $md5->digest
 
 Return the binary digest for the message.
