@@ -297,8 +297,6 @@ unsigned char block[64];
     state[1] += b; TO32(state[1]);
     state[2] += c; TO32(state[2]);
     state[3] += d; TO32(state[3]);
-
-    Zero(x, 1, x); /* Zeroize sensitive information. */
 }
 
 
@@ -364,8 +362,6 @@ MD5_CTX *context;                                       /* context */
 
     /* Store state in digest */
     Encode (digest, context->state, 16);
-
-    Zero(context, 1, *context);  /* Zeroize sensitive information. */
 }
 
 static MD5_CTX* get_md5_ctx(SV* sv)
@@ -375,10 +371,11 @@ static MD5_CTX* get_md5_ctx(SV* sv)
     croak("Not a reference to a Digest::MD5 object");
 }
 
-static char* hex_16(unsigned char* from, char* to)
+
+static char* hex_16(const unsigned char* from, char* to)
 {
     static char *hexdigits = "0123456789abcdef";
-    unsigned char *end = from + 16;
+    const unsigned char *end = from + 16;
     char *d = to;
 
     while (from < end) {
@@ -390,11 +387,11 @@ static char* hex_16(unsigned char* from, char* to)
     return to;
 }
 
-static char* base64_16(unsigned char* from, char* to)
+static char* base64_16(const unsigned char* from, char* to)
 {
     static char* base64 =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    unsigned char *end = from + 16;
+    const unsigned char *end = from + 16;
     unsigned char c1, c2, c3;
     char *d = to;
 
@@ -413,6 +410,37 @@ static char* base64_16(unsigned char* from, char* to)
     }
     *d = '\0';
     return to;
+}
+
+/* Formats */
+#define F_BIN 0
+#define F_HEX 1
+#define F_B64 2
+
+static SV* make_mortal_sv(const unsigned char *src, int type)
+{
+    STRLEN len;
+    char result[33];
+    char *ret;
+    
+    switch (type) {
+    case F_BIN:
+	ret = (char*)src;
+	len = 16;
+	break;
+    case F_HEX:
+	ret = hex_16(src, result);
+	len = 32;
+	break;
+    case F_B64:
+	ret = base64_16(src, result);
+	len = 22;
+	break;
+    default:
+	croak("Bad convertion type (%d)", type);
+	break;
+    }
+    return sv_2mortal(newSVpv(ret,len));
 }
 
 
@@ -453,9 +481,9 @@ add(self, ...)
 	SV* self
     PREINIT:
 	MD5_CTX* context = get_md5_ctx(self);
-	STRLEN len;
-	unsigned char *data;
 	int i;
+	unsigned char *data;
+	STRLEN len;
     PPCODE:
 	for (i = 1; i < items; i++) {
 	    data = (unsigned char *)(SvPV(ST(i), len));
@@ -480,50 +508,30 @@ addfile(self, fh)
 SV *
 digest(context)
 	MD5_CTX* context
+    ALIAS:
+	Digest::MD5::digest    = F_BIN
+	Digest::MD5::hexdigest = F_HEX
+	Digest::MD5::b64digest = F_B64
     PREINIT:
 	unsigned char digeststr[16];
-    CODE:
+    PPCODE:
         MD5Final(digeststr, context);
-	ST(0) = sv_2mortal(newSVpv((char *)digeststr, 16));
-
-char*
-hexdigest(context)
-	MD5_CTX* context
-    PREINIT:
-	unsigned char digeststr[16];
-	char hexstr[33];
-    CODE:
-        MD5Final(digeststr, context);
-	RETVAL = hex_16(digeststr, hexstr);
-    OUTPUT:
-	RETVAL
-
-char*
-b64digest(context)
-	MD5_CTX* context
-    PREINIT:
-	unsigned char digeststr[16];
-        char b64str[23];
-    CODE:
-	MD5Final(digeststr, context);
-	RETVAL = base64_16(digeststr, b64str);
-    OUTPUT:
-	RETVAL
+	MD5Init(context);  /* In case it is reused */
+        ST(0) = make_mortal_sv(digeststr, ix);
+        XSRETURN(1);
 
 SV*
 md5(...)
     ALIAS:
-	Digest::MD5::md5        = 1
-	Digest::MD5::md5_hex    = 2
-	Digest::MD5::md5_base64 = 3
+	Digest::MD5::md5        = F_BIN
+	Digest::MD5::md5_hex    = F_HEX
+	Digest::MD5::md5_base64 = F_B64
     PREINIT:
 	MD5_CTX ctx;
 	int i;
-	STRLEN len;
 	unsigned char *data;
+        STRLEN len;
 	unsigned char digeststr[16];
-        char result[33];
-        char *str;
     PPCODE:
 	MD5Init(&ctx);
 	for (i = 0; i < items; i++) {
@@ -531,23 +539,5 @@ md5(...)
 	    MD5Update(&ctx, data, len);
 	}
 	MD5Final(digeststr, &ctx);
-
-        switch (ix) {
-	case 1:
-	    str = (char*)digeststr;
-	    len = 16;
-	    break;
-	case 2:
-	    str = hex_16(digeststr, result);
-	    len = 32;
-	    break;
-	case 3:
-	    str = base64_16(digeststr, result);
-	    len = 22;
-	    break;
-	default:
-	    croak("Bad md5 function index");
-	    break;
-	}
-        ST(0) = sv_2mortal(newSVpv(str,len));
+        ST(0) = make_mortal_sv(digeststr, ix);
         XSRETURN(1);
