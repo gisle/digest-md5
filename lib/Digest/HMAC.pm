@@ -1,5 +1,5 @@
 package Digest::HMAC;
-$VERSION = "0.01";
+$VERSION = "1.00";
 
 use strict;
 
