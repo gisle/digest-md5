@@ -379,24 +379,21 @@ MD5Final(U8* digest, MD5_CTX *ctx)
 {
     STRLEN fill = ctx->bytes_low & 0x3F;
     STRLEN padlen = (fill < 56 ? 56 : 120) - fill;
+    U32 bits_low, bits_high;
 #ifdef MD5_DEBUG
     fprintf(stderr,"       Final:  %s\n", ctx_dump(ctx));
 #endif
     Copy(PADDING, ctx->buffer + fill, padlen, U8);
     fill += padlen;
 
+    bits_low = ctx->bytes_low << 3;
+    bits_high = (ctx->bytes_high << 3) | (ctx->bytes_low  >> 29);
 #ifdef byteswap
-    *(U32*)(ctx->buffer + fill) = byteswap(ctx->bytes_low << 3);
-    fill += 4;
-    *(U32*)(ctx->buffer + fill) = byteswap((ctx->bytes_high << 3) |
-					   (ctx->bytes_low  >> 29));
-    fill += 4;
+    *(U32*)(ctx->buffer + fill) = byteswap(bits_low);    fill += 4;
+    *(U32*)(ctx->buffer + fill) = byteswap(bits_high);   fill += 4;
 #else
-    u2s(TO32(ctx->bytes_low << 3), ctx->buffer + fill);
-    fill += 4;
-    u2s(TO32((ctx->bytes_high << 3) | (ctx->bytes_low  >> 29)),
-	ctx->buffer + fill);
-    fill += 4;
+    u2s(bits_low,  ctx->buffer + fill);   fill += 4;
+    u2s(bits_high, ctx->buffer + fill);   fill += 4;
 #endif
 
     MD5Transform(ctx, ctx->buffer, fill >> 6);
