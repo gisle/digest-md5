@@ -104,7 +104,7 @@ characters from this set: 'A'..'Z', 'a'..'z', '0'..'9', '+' and
 Note that the base64 encoded string returned is not padded to be a
 multiple of 4 bytes long.  If you want interoperability with other
 base64 encoded md5 digests you might want to append the redundant
-string redundant "==" to the result.
+string "==" to the result.
 
 =back
 
