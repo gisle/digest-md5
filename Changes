@@ -1,3 +1,20 @@
+1999-04-26   Gisle Aas <gisle@aas.no>
+
+   Release 2.07
+
+   The Digest::SHA1 module failed on some 64-bit systems, because I
+   assumed there was a correspondence between the U32 size and
+   BYTEORDER.  This version use 'unsigned long' as Uwe's original
+   SHA module did.
+
+   The module should now work better when liked statically with perl,
+   because we know use a safer module-loaded test in Digest.pm.
+
+   Assume we know the outcome of the alignment test on VMS. Patch by
+   Chuck Lane <lane@duphy4.physics.drexel.edu>
+
+
+
 1999-03-26   Gisle Aas <gisle@aas.no>
 
    Release 2.06
