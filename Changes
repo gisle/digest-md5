@@ -1,3 +1,21 @@
+1998-10-28   Gisle Aas <aas@sn.no>
+
+   Release 1.99_58
+
+   Should be very close to a 2.00 release now.  Need some success
+   reports from people running on big-endian machines first I think.
+
+   Added a Digest::MD2 implementation.
+
+   Wrote Digest.pm documentation.  This define the interface that all
+   Digest:: modules should provide.
+
+   Avoided some code duplication in MD5.xs
+
+   Fixed typo, that prevented Digest::SHA1::sha1_base64() from working.
+
+
+
 1998-10-27   Gisle Aas <aas@sn.no>
 
    Release 1.99_57
