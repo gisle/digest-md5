@@ -2,10 +2,13 @@
 
    Release 2.21
 
-   Minor tweaks Sync up with bleadperl:
+   Minor tweaks sync up with bleadperl:
      - VMS optimizer tweaks to the Makefile.PL
      - MacOS support
-     - Added alignment test.
+     - Added alignment test
+
+   Added example to the MD5 POD that shows how to calculate the
+   digest of Unicode strings.
 
 
 
