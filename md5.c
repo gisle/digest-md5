@@ -1,21 +1,28 @@
 #include <stdio.h>
 #include <string.h>
 
-#define BYTEORDER 0x1234
+#define BYTEORDER 0x4321
 #define MD5_DEBUG
 
 typedef unsigned int UINT;
 typedef unsigned int U32;
 typedef unsigned char UCHAR;
 
-#if BYTEORDER == 0x1234
-#define byteswap(l) (l)
-#else
-#define byteswap(l) ...
-#endif
-
 #define TO32(l)    (l)
 #define TRUNC32(l)
+
+#if BYTEORDER == 0x1234 || BYTEORDER == 0x12345678
+#define byteswap(x) (x)
+#elif BYTEORDER == 0x4321  || BYTEORDER == 0x87654321
+#define byteswap(x) 	((((x)&0xFF)<<24)	\
+			|(((x)>>24)&0xFF)	\
+			|(((x)&0x0000FF00)<<8)	\
+			|(((x)&0x00FF0000)>>8)	)
+#else
+
+static U32 byteswap(U32 x);  /* function */
+
+#endif
 
 #ifdef MD5_DEBUG
 static void my_memcpy(char *b, char*d, const char*s, unsigned int len)
@@ -74,34 +81,33 @@ static unsigned char PADDING[64] = {
 /* FF, GG, HH, and II transformations for rounds 1, 2, 3, and 4.
  * Rotation is separate from addition to prevent recomputation.
  */
-#define FF(a, b, c, d, s, ac) { \
+#define FF(a, b, c, d, s, ac)                    \
  (a) += F ((b), (c), (d)) + (NEXTx) + (U32)(ac); \
- TRUNC32((a)); \
- (a) = ROTATE_LEFT ((a), (s)); \
- (a) += (b); \
- TRUNC32((a)); \
-  }
-#define GG(a, b, c, d, x, s, ac) { \
- (a) += G ((b), (c), (d)) + (X[x]) + (U32)(ac); \
- TRUNC32((a)); \
- (a) = ROTATE_LEFT ((a), (s)); \
- (a) += (b); \
- TRUNC32((a)); \
-  }
-#define HH(a, b, c, d, x, s, ac) { \
- (a) += H ((b), (c), (d)) + (X[x]) + (U32)(ac); \
- TRUNC32((a)); \
- (a) = ROTATE_LEFT ((a), (s)); \
- (a) += (b); \
- TRUNC32((a)); \
-  }
-#define II(a, b, c, d, x, s, ac) { \
- (a) += I ((b), (c), (d)) + (X[x]) + (U32)(ac); \
- TRUNC32((a)); \
- (a) = ROTATE_LEFT ((a), (s)); \
- (a) += (b); \
- TRUNC32((a)); \
-  }
+ TRUNC32((a));                                   \
+ (a) = ROTATE_LEFT ((a), (s));                   \
+ (a) += (b);                                     \
+ TRUNC32((a));
+
+#define GG(a, b, c, d, x, s, ac)                 \
+ (a) += G ((b), (c), (d)) + X[x] + (U32)(ac);    \
+ TRUNC32((a));                                   \
+ (a) = ROTATE_LEFT ((a), (s));                   \
+ (a) += (b);                                     \
+ TRUNC32((a));
+
+#define HH(a, b, c, d, x, s, ac)                 \
+ (a) += H ((b), (c), (d)) + X[x] + (U32)(ac);    \
+ TRUNC32((a));                                   \
+ (a) = ROTATE_LEFT ((a), (s));                   \
+ (a) += (b);                                     \
+ TRUNC32((a));
+
+#define II(a, b, c, d, x, s, ac)                 \
+ (a) += I ((b), (c), (d)) + X[x] + (U32)(ac);    \
+ TRUNC32((a));                                   \
+ (a) = ROTATE_LEFT ((a), (s));                   \
+ (a) += (b);                                     \
+ TRUNC32((a));
 
 static void
 MD5Init(MD5_CTX *ctx)
@@ -125,7 +131,7 @@ MD5Transform(MD5_CTX* ctx, const void* buf, UINT blocks)
   U32 C = ctx->C;
   U32 D = ctx->D;
 
-  const U32 *x = buf;
+  const U32 *x = buf;  /* really just type casting */
 
   while(blocks--) {
     U32 a = A;
@@ -138,8 +144,9 @@ MD5Transform(MD5_CTX* ctx, const void* buf, UINT blocks)
     #define NEXTx *x++
 #else
     U32 X[16];
-    U32 *xx = X;
-    #define NEXTx *xx++ = byteswap(*x++)
+    U32 *saveswapped = X;
+    U32 tmp;
+    #define NEXTx tmp=*x++, *saveswapped++ = byteswap(tmp)
 #endif
 
 #ifdef MD5_DEBUG
