@@ -37,6 +37,7 @@ sub free_u32_alignment
     print "Testing alignment requirements for U32... ";
     return 1 if $^O eq 'VMS';
     return 1 if $^O eq 'MSWin32';
+    return 0 if $^O eq 'hpux' && $Config{osvers} < 11.0;
 
     open(ALIGN_TEST, ">u32align.c") or die "$!";
     print ALIGN_TEST <<'EOT'; close(ALIGN_TEST);
