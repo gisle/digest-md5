@@ -2,10 +2,10 @@
 
    Release 2.33
    
-   Enable explict context for slight performance improvement
-   in threaded perls.
+   Enable explicit context passing for slight performance
+   improvement in threaded perls.
    
-   Tweaks to the Makefile.PL so that it is suiteable both for
+   Tweaks to the Makefile.PL so that it is suitable both for
    core and CPAN use.
 
 
