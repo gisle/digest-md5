@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 
-//#define MD5_DEBUG
+/* #define MD5_DEBUG /**/
 
-#define BYTEORDER 0x12345
+#define BYTEORDER 0x1234
 
 typedef unsigned int U32;
 typedef unsigned char U8;
@@ -29,16 +29,22 @@ typedef unsigned int STRLEN;
   #define TRUNC32(x) /*nothing*/
 #endif
 
+/* The MD5 algorithm is defined in terms of little endian 32-bit
+ * values.  The following macros (and functions) allow us to convert
+ * between native integers and such values.
+ */
 #if BYTEORDER == 0x1234       /* 32-bit little endian */
-  #define byteswap(x) (x)
+  #define byteswap(x) (x)     /* no-op */
+
 #elif  BYTEORDER == 0x4321    /* 32-bit big endian */
   #define byteswap(x) 	((((x)&0xFF)<<24)	\
 			|(((x)>>24)&0xFF)	\
 			|(((x)&0x0000FF00)<<8)	\
 			|(((x)&0x00FF0000)>>8)	)
 #else                         /* something else, for instance 64-bit */
+
   #ifdef byteswap
-      #undef byteswap
+      #undef byteswap /* need to use u2s and s2u */
   #endif
 
 static void u2s(U32 u, U8* s)
