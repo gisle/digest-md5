@@ -383,14 +383,24 @@ new(xclass, ...)
 	SV* xclass
     PREINIT:
 	MD5_CTX* context;
-	char *sclass = SvROK(xclass) ? sv_reftype(xclass,1) : SvPV(xclass, na);
+	STRLEN len;
+	unsigned char *data;
+	int i;
     PPCODE:
-	New(55, context, 1, MD5_CTX);
-	MD5Init(context);
-
-	ST(0) = sv_newmortal();
-        sv_setref_pv(ST(0), sclass, (void*)context);
-        SvREADONLY_on(SvRV(ST(0)));
+	if (!SvROK(xclass)) {
+	    char *sclass = SvPV(xclass, na);
+	    New(55, context, 1, MD5_CTX);
+	    ST(0) = sv_newmortal();
+	    sv_setref_pv(ST(0), sclass, (void*)context);
+	    SvREADONLY_on(SvRV(ST(0)));
+	} else {
+	    context = get_md5_ctx(xclass);
+	}
+        MD5Init(context);
+	for (i = 1; i < items; i++) {
+	    data = (unsigned char *)(SvPV(ST(i), len));
+	    MD5Update(context, data, len);
+	}
 	XSRETURN(1);
 
 void
@@ -400,21 +410,10 @@ DESTROY(context)
         Safefree(context);
 
 void
-reset(self)
-	SV* self
-    PREINIT:
-	MD5_CTX* context = get_md5_ctx(self);
-    PPCODE:
-	MD5Init(context);
-	XSRETURN(1);  /* self */
-	
-
-void
 add(self, ...)
 	SV* self
     PREINIT:
 	MD5_CTX* context = get_md5_ctx(self);
-	SV *svdata;
 	STRLEN len;
 	unsigned char *data;
 	int i;
@@ -470,7 +469,7 @@ hexdigest(context)
 	RETVAL
 
 char*
-b64_digest(context)
+b64digest(context)
 	MD5_CTX* context
     PREINIT:
 	unsigned char digeststr[16];

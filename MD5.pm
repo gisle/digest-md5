@@ -12,23 +12,18 @@ $VERSION = '1.9951';  # $Date$
 
 bootstrap MD5 $VERSION;
 
+*reset = \&new;
 
 sub hash
 {
     my $self = shift;
-    if (ref($self)) {
-	$self->reset;
-    } else {
-	$self = $self->new;
-    }
-    $self->add(@_);
-    $self->digest;
+    $self->new(@_)->digest;
 }
 
 sub hexhash
 {
     my $self = shift;
-    unpack("H*", $self->hash(@_));
+    $self->new(@_)->hexdigest;
 }
 
 1;
