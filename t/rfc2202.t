@@ -63,12 +63,22 @@ foreach (@{$case{"HMAC-MD5"}}) {
 
     # Test functional interface
     $failed++ if hmac_md5($_->{data}, $_->{key}) ne $_->{digest};
-    print "# $failed\n" if $failed;
     print "not " if $failed;
     print "ok $testno\n";
 }
 
-use Digest::HMAC_SHA1 qw(hmac_sha1);
+# Digest::SHA1 might fail if the SHA module is not installed
+eval {
+   # use Digest::HMAC_SHA1 qw(hmac_sha1);
+   require Digest::HMAC_SHA1;
+   *hmac_sha1 = \&Digest::HMAC_SHA1::hmac_sha1;
+};
+if ($@) {
+   print "\n# HMAC-SHA-1 tests skipped\n$@\n";
+   for (8..14) { print "ok $_\n"; }
+}
+else {
+
 print "\n# HMAC-SHA-1 tests\n";
 foreach (@{$case{"HMAC-SHA-1"}}) {
     $testno++;
@@ -85,16 +95,10 @@ foreach (@{$case{"HMAC-SHA-1"}}) {
     # Test functional interface
     $failed++ if hmac_sha1($_->{data}, $_->{key}) ne $_->{digest};
 
-    if ($failed) {
-	print "# $failed\n";
-	print length($_->{data}), "\n";
-	print $_->{data_len}, "\n";
-	#use Data::Dumper; print Dumper($_);
-    }
     print "not " if $failed;
     print "ok $testno\n";
 }
-
+}
 
 __END__
 
