@@ -151,7 +151,10 @@ static unsigned char PADDING[64] = {
 static void memcpy_byteswap(long *dest, const long* src, unsigned int len)
 {
     len /= 4;
-    while (len--) *dest++ = htovl(*src++);
+    while (len--) {
+	*dest++ = htovl(*src);
+	src++;
+    }
 }
 
 #define MEMCPY_BYTESWAP(d,s,l) memcpy_byteswap((long*)(d), (long*)(s), (l))
