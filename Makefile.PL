@@ -82,10 +82,14 @@ int main(int argc, char** argv, char** env)
 EOT
 
     my $cc_cmd = "$Config{cc} $Config{ccflags} -I$Config{archlibexp}/CORE";
-    $cc_cmd .= ' -DWIN32IO_IS_STDIO' if $^O eq 'MSWin32';
     my $exe = "u32align$Config{_exe}";
+    if ($^O eq 'MSWin32') {
+        $cc_cmd .= ' -DWIN32IO_IS_STDIO';
+    } else {
+	$cc_cmd .= " -o $exe";
+    }
     my $rc;
-    $rc = system("$cc_cmd -o $exe u32align.c");
+    $rc = system("$cc_cmd u32align.c");
     if ($rc) {
 	print "Can't compile test program\n";
 	unlink("u32align.c", $exe, "u32align$Config{_o}");
