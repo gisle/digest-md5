@@ -10,11 +10,6 @@ print "1..5\n";
 use strict;
 use Digest::MD5 qw(md5 md5_hex md5_base64);
 
-#
-# This is the output of: 'md5sum Changes README MD5.pm MD5.xs rfc1321.txt'
-#
-my $EXPECT;
-
 # To update the EBCDIC section even on a Latin 1 platform,
 # run this script with $ENV{EBCDIC_MD5SUM} set to a true value.
 # (You'll need to have Perl 5.7.3 or later, to have the Encode installed.)
@@ -22,27 +17,29 @@ my $EXPECT;
 #  also have the $ENV{PERL_CORE} set to a true value.)
 # Similarly, to update MacOS section, run with $ENV{MAC_MD5SUM} set.
 
+my $EXPECT;
 if (ord "A" == 193) { # EBCDIC
     $EXPECT = <<EOT;
-b362148b17a451f0d81e0ebb2487756e  Changes
+d3b620a5f4984808f4160cf1f365d64e  Changes
 5a591a47e8c40fe4b78c744111511c45  README
-3157e2d2e27dacddea7c54efddc32520  MD5.pm
+748e78fd9f8f3c8725681c49e9a6ec02  MD5.pm
 4850753428db9422e8e5f97b401d5a13  MD5.xs
 276da0aa4e9a08b7fe09430c9c5690aa  rfc1321.txt
 EOT
 } elsif ("\n" eq "\015") { # MacOS
     $EXPECT = <<EOT;
-cc90a85f89b397341f97c9279640fbf5  Changes
-127952946201e6afc19eb41250c56871  README
-d87ec77c963d27198b7427156167a5b3  MD5.pm
-5be7049479ea47d7c257dabcae835720  MD5.xs
-f9a35714ee1d1d0c5a3a80f4dbea956a  rfc1321.txt
+4a4afbabee008add25555be73e4daa82  Changes
+3519f3d02c7c91158f732f0f00064657  README
+1b6d0e5130fb20c0fc8f61e683237183  MD5.pm
+1be293491bba726810f8e87671ee0328  MD5.xs
+754b9db19f79dbc4992f7166eb0f37ce  rfc1321.txt
 EOT
 } else {
+    # This is the output of: 'md5sum Changes README MD5.pm MD5.xs rfc1321.txt'
     $EXPECT = <<EOT;
-0106b67df0dbf9f4d65e9fc04907745b  Changes
+4a4afbabee008add25555be73e4daa82  Changes
 3519f3d02c7c91158f732f0f00064657  README
-88c35ca46c7e8069fb5ae00c091c98d6  MD5.pm
+1b6d0e5130fb20c0fc8f61e683237183  MD5.pm
 1be293491bba726810f8e87671ee0328  MD5.xs
 754b9db19f79dbc4992f7166eb0f37ce  rfc1321.txt
 EOT
