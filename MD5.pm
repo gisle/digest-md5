@@ -247,7 +247,7 @@ This is useful when calculating checksum for files:
     close(FILE);
     print $md5->b64digest, " $file\n";
 
-Or we can use the builtin addfile method for more efficient reading of
+Or we can use the addfile method for more efficient reading of
 the file:
 
     use Digest::MD5;
