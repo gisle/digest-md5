@@ -1,4 +1,5 @@
 
+   Added some new tests.
 
    $md5->b64digest implemented with same base64 encoder as md5_base64.
 
