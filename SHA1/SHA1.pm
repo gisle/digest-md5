@@ -103,6 +103,8 @@ in L<Digest>.
 
 L<Digest>, L<Digest::HMAC_SHA1>, L<Digest::MD5>
 
+L<http://www.itl.nist.gov/fipspubs/fip180-1.htm>
+
 =head1 COPYRIGHT
 
 This library is free software; you can redistribute it and/or
