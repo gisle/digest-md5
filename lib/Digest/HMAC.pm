@@ -1,12 +1,15 @@
 package Digest::HMAC;
+$VERSION = "0.01";
 
 use strict;
+
+# OO interface
 
 sub new
 {
     my($class, $key, $hasher, $block_size) =  @_;
-    $key = $hasher->new->add($key)->digest if length($key) > $block_size;
     $block_size ||= 64;
+    $key = $hasher->new->add($key)->digest if length($key) > $block_size;
 
     my $self = bless {}, $class;
     $self->{k_ipad} = $key ^ (chr(0x36) x $block_size);
@@ -32,5 +35,27 @@ sub _digest
 sub digest    { shift->_digest->digest;    }
 sub hexdigest { shift->_digest->hexdigest; }
 sub b64digest { shift->_digest->b64digest; }
+
+
+# Functional interface
+
+require Exporter;
+*import = \&Exporter::import;
+use vars qw(@EXPORT_OK);
+@EXPORT_OK = qw(hmac hmac_hex);
+
+sub hmac
+{
+    my($data, $key, $hash_func, $block_size) = @_;
+    $block_size ||= 64;
+    $key = &$hash_func($key) if length($key) > $block_size;
+
+    my $k_ipad = $key ^ (chr(0x36) x $block_size);
+    my $k_opad = $key ^ (chr(0x5c) x $block_size);
+
+    &$hash_func($k_opad, &$hash_func($k_ipad, $data));
+}
+
+sub hmac_hex { unpack("H*", &hmac); }
 
 1;
