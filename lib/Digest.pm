@@ -166,6 +166,8 @@ string.
 
 L<Digest::MD5>, L<Digest::SHA1>, L<Digest::HMAC>, L<Digest::MD2>
 
+L<MIME::Base64>
+
 =head1 AUTHOR
 
 Gisle Aas <gisle@aas.no>
