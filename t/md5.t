@@ -48,8 +48,31 @@ foreach (sort(keys(%data)))
     $md5->add($_);
     $digest = $md5->digest;
     $hex = unpack("H*", $digest);
-    if ($hex ne $data{$_})
-    {
+    if ($hex ne $data{$_}) {
+        print STDERR "\$md5->digest: $_\n";
+        print STDERR "expected: $data{$_}\n",
+                     "got     : $hex\n";
+	$failed++;
+    }
+
+    if (MD5::md5($_) ne $digest) {
+	print STDERR "md5($_) failed\n";
+	$failed++;
+    }
+
+    if (MD5::md5_hex($_) ne $hex) {
+	print STDERR "md5_hex($_) failed\n";
+	$failed++;
+    }
+
+    # same stuff ending with $md5->hexdigest instead
+    $md5->reset;
+    $md5->add($_);
+    $hex = $md5->hexdigest;
+    if ($hex ne $data{$_}) {
+        print STDERR "\$md5->hexdigest: $_\n";
+        print STDERR "expected: $data{$_}\n",
+                     "got     : $hex\n";
 	$failed++;
     }
 }
