@@ -1,26 +1,33 @@
-print "1..7\n";
+print "1..14\n";
+
+$test_case = 0;
+$algorithm = "";
 
 while (<DATA>) {
    next if /^\s+$/;            # blank lines
    next if /^Cheng & Glenn/;   # page header
    next if /^RFC 2202/;        # page header
    chomp;
-   if (/^2\. Test Cases for HMAC-MD5/ .. /3\. Test Cases for HMAC-SHA-1/) {
-	if (/^(\w+)\s+=\s+(.*)/) {
+   if (/^2\. Test Cases for/ .. /4\. Security Considerations/) {
+	if (/^\d+\. Test Cases for (\S+)/) {
+	    if (defined $key) { save($key, $val); undef($key) }
+	    $algorithm = $1;
+        } elsif (/^(\w+(?:-\w+)*)\s+=\s+(.*)/) {
             save($key, $val) if defined $key;
 	    $key = $1;
 	    $val = $2;
 	    $test_case = $val if $key eq "test_case";
         } elsif (/^\s+(.*)/) {
 	    $val .= " $1";
-        } elsif (/^3\. /) {
-	    save($key, $val);
+        } elsif (/^4\. /) {
+	    # ignore
         } else {
 	    print ">>> $_\n";
         }
    }
 }
 close(DATA);
+save($key, $val) if $key;
 
 sub save
 {
@@ -32,23 +39,23 @@ sub save
     } elsif ($val =~ s/^\"// && $val =~ s/\"$//) {
 	# we already did it
     }
-    $case[$test_case]{$key} = $val;
+    $case{$algorithm}[$test_case-1]{$key} = $val;
 }
 
-shift(@case);
+#use Data::Dumper; print Dumper(\%case);
 
-use Digest::HMAC_MD5 qw(hmac_md5);
 
 $testno = 0;
-foreach (@case) {
+
+use Digest::HMAC_MD5 qw(hmac_md5);
+print "\n# HMAC-MD5 tests\n";
+foreach (@{$case{"HMAC-MD5"}}) {
     $testno++;
     #use Data::Dumper; print Dumper($_);
     warn unless length($_->{key}) == $_->{key_len};
     warn unless length($_->{data}) == $_->{data_len};
 
     my $failed;
-
-
     # Test OO interface
     my $hasher = Digest::HMAC_MD5->new($_->{key});
     $hasher->add($_->{data});
@@ -56,6 +63,34 @@ foreach (@case) {
 
     # Test functional interface
     $failed++ if hmac_md5($_->{data}, $_->{key}) ne $_->{digest};
+    print "# $failed\n" if $failed;
+    print "not " if $failed;
+    print "ok $testno\n";
+}
+
+use Digest::HMAC_SHA1 qw(hmac_sha1);
+print "\n# HMAC-SHA-1 tests\n";
+foreach (@{$case{"HMAC-SHA-1"}}) {
+    $testno++;
+    #use Data::Dumper; print Dumper($_);
+    warn unless length($_->{key}) == $_->{key_len};
+    warn unless length($_->{data}) == $_->{data_len};
+
+    my $failed;
+    # Test OO interface
+    my $hasher = Digest::HMAC_SHA1->new($_->{key});
+    $hasher->add($_->{data});
+    $failed++ unless $hasher->digest eq $_->{digest};
+
+    # Test functional interface
+    $failed++ if hmac_sha1($_->{data}, $_->{key}) ne $_->{digest};
+
+    if ($failed) {
+	print "# $failed\n";
+	print length($_->{data}), "\n";
+	print $_->{data_len}, "\n";
+	#use Data::Dumper; print Dumper($_);
+    }
     print "not " if $failed;
     print "ok $testno\n";
 }
@@ -182,7 +217,7 @@ key_len =       16
 data =          "Test With Truncation"
 data_len =      20
 digest =        0x56461ef2342edc00f9bab995690efd4c
-digest-96       0x56461ef2342edc00f9bab995
+digest-96 =     0x56461ef2342edc00f9bab995
 
 test_case =     6
 key =           0xaa repeated 80 times
@@ -237,7 +272,8 @@ key =           0x0102030405060708090a0b0c0d0e0f10111213141516171819
 key_len =       25
 data =          0xcd repeated 50 times
 data_len =      50
-digest =        0x4c9007f4026250c6bc8414f9bf50c86c2d7235dane 7
+digest =        0x4c9007f4026250c6bc8414f9bf50c86c2d7235da
+
 test_case =     5
 key =           0x0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c
 key_len =       20
@@ -250,25 +286,6 @@ test_case =     6
 key =           0xaa repeated 80 times
 key_len =       80
 data =          "Test Using Larger Than Block-Size Key - Hash Key First"
-data_len =      54
-digest =        0xaa4ae5e15272d00e95705637ce8a3b55ed402112
-
-test_case =     7
-key =           0xaa repeated 80 times
-key_len =       80
-data =          "Test Using Larger Than Block-Size Key and Larger
-                Than One Block-Size Data"
-data_len =      73
-digest =        0xe8e99d0f45237d786d6bbaa7965c7808bbff1a91
-data_len =      20
-digest =        0x4c1a03424b55e07fe7f27be1d58bb9324a9a5a04
-digest-96 =     0x4c1a03424b55e07fe7f27be1
-
-test_case =     6
-key =           0xaa repeated 80 times
-key_len =       80
-data =          "Test Using Larger Than Block-Size Key - Hash Key
-First"
 data_len =      54
 digest =        0xaa4ae5e15272d00e95705637ce8a3b55ed402112
 
