@@ -20,12 +20,15 @@ extern "C" {
 
 /* Useful defines & typedefs */
 
+typedef unsigned char BYTE;     /* 8-bit quantity */
+typedef unsigned long LONG;     /* 32-or-more-bit quantity */
+
 #define SHA_BLOCKSIZE		64
 #define SHA_DIGESTSIZE		20
 
 typedef struct {
-    U32 digest[5];		/* message digest */
-    U32 count_lo, count_hi;	/* 64-bit bit count */
+    LONG digest[5];		/* message digest */
+    LONG count_lo, count_hi;	/* 64-bit bit count */
     U8 data[SHA_BLOCKSIZE];	/* SHA data buffer */
     int local;			/* unprocessed amount in data */
 } SHA_INFO;
@@ -40,7 +43,6 @@ typedef struct {
 /* #define UNROLL_LOOPS */
 
 /* SHA f()-functions */
-
 #define f1(x,y,z)	((x & y) | (~x & z))
 #define f2(x,y,z)	(x ^ y ^ z)
 #define f3(x,y,z)	((x & y) | (x & z) | (y & z))
@@ -87,7 +89,7 @@ static void sha_transform(SHA_INFO *sha_info)
 {
     int i;
     U8 *dp;
-    U32 T, A, B, C, D, E, W[80], *WP;
+    LONG T, A, B, C, D, E, W[80], *WP;
 
     dp = sha_info->data;
 
@@ -102,7 +104,7 @@ nether regions of the anatomy...
 #if BYTEORDER == 0x1234
 #define SWAP_DONE
     for (i = 0; i < 16; ++i) {
-	T = *((U32 *) dp);
+	T = *((LONG *) dp);
 	dp += 4;
 	W[i] =  ((T << 24) & 0xff000000) | ((T <<  8) & 0x00ff0000) |
 		((T >>  8) & 0x0000ff00) | ((T >> 24) & 0x000000ff);
@@ -112,7 +114,7 @@ nether regions of the anatomy...
 #if BYTEORDER == 0x4321
 #define SWAP_DONE
     for (i = 0; i < 16; ++i) {
-	T = *((U32 *) dp);
+	T = *((LONG *) dp);
 	dp += 4;
 	W[i] = T32(T);
     }
@@ -121,7 +123,7 @@ nether regions of the anatomy...
 #if BYTEORDER == 0x12345678
 #define SWAP_DONE
     for (i = 0; i < 16; i += 2) {
-	T = *((U32 *) dp);
+	T = *((LONG *) dp);
 	dp += 8;
 	W[i] =  ((T << 24) & 0xff000000) | ((T <<  8) & 0x00ff0000) |
 		((T >>  8) & 0x0000ff00) | ((T >> 24) & 0x000000ff);
@@ -134,7 +136,7 @@ nether regions of the anatomy...
 #if BYTEORDER == 0x87654321
 #define SWAP_DONE
     for (i = 0; i < 16; i += 2) {
-	T = *((U32 *) dp);
+	T = *((LONG *) dp);
 	dp += 8;
 	W[i] = T32(T >> 32);
 	W[i+1] = T32(T);
@@ -214,14 +216,14 @@ static void sha_init(SHA_INFO *sha_info)
 static void sha_update(SHA_INFO *sha_info, U8 *buffer, int count)
 {
     int i;
-    U32 clo;
+    LONG clo;
 
-    clo = T32(sha_info->count_lo + ((U32) count << 3));
+    clo = T32(sha_info->count_lo + ((LONG) count << 3));
     if (clo < sha_info->count_lo) {
 	++sha_info->count_hi;
     }
     sha_info->count_lo = clo;
-    sha_info->count_hi += (U32) count >> 29;
+    sha_info->count_hi += (LONG) count >> 29;
     if (sha_info->local) {
 	i = SHA_BLOCKSIZE - sha_info->local;
 	if (i > count) {
@@ -252,7 +254,7 @@ static void sha_update(SHA_INFO *sha_info, U8 *buffer, int count)
 static void sha_final(unsigned char digest[20], SHA_INFO *sha_info)
 {
     int count;
-    U32 lo_bit_count, hi_bit_count;
+    LONG lo_bit_count, hi_bit_count;
 
     lo_bit_count = sha_info->count_lo;
     hi_bit_count = sha_info->count_hi;
