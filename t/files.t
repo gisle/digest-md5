@@ -20,7 +20,7 @@ my $testno = 0;
 my $B64 = 1;
 eval { require MIME::Base64; };
 if ($@) {
-    print "$@\n";
+    print $@;
     print "Will not test base64 methods\n";
     $B64 = 0;
 }
@@ -84,6 +84,14 @@ for (split /^/, $EXPECT) {
      }
      if (MD5->new->add(@data)->digest ne $md5bin) {
 	 print "$file: MD5->new->add(\@data)->digest failed\n";
+	 $failed++;
+     }
+     my $md5 = MD5->new;
+     for (@data) {
+	 $md5->add($_);
+     }
+     if ($md5->digest ne $md5bin) {
+	 print "$file: $md5->add()-loop failed\n";
 	 $failed++;
      }
 
