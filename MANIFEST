@@ -7,6 +7,7 @@ MD2/rfc1319.txt		The MD2 Message-Digest Algorithm
 MD2/t/md2.t		Test if Digest::MD2 works
 MD2/typemap		Supplementary typemap
 MD5.pm			Digest::MD5 Perl Module
+hints/dec_osf.pl	Workaround for DEC compiler bug
 hints/irix_6.pl		Workaround for IRIX compiler bug
 lib/MD5.pm		MD5 backwards compatibility stuff
 lib/Digest.pm		Loading frontend
