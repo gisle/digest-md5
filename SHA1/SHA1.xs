@@ -441,10 +441,12 @@ addfile(self, fh)
 	unsigned char buffer[4096];
 	int  n;
     CODE:
-	/* Process blocks until EOF */
-        while ( (n = PerlIO_read(fh, buffer, sizeof(buffer)))) {
-	    sha_update(context, buffer, n);
-	}
+        if (fh) {
+	    /* Process blocks until EOF */
+            while ( (n = PerlIO_read(fh, buffer, sizeof(buffer)))) {
+		sha_update(context, buffer, n);
+	    }
+        }
 	XSRETURN(1);  /* self */
 
 void
