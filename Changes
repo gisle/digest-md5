@@ -1,3 +1,16 @@
+1998-01-31   Gisle Aas <gisle@aas.no>
+
+   Release 2.02
+
+   Added a hints file as workaround for an IRIX compiler bug.
+   Contributed by D Roland Walker <walker@ncbi.nlm.nih.gov>.
+
+   Note that the rfc2202 test can still fail on some DEC Alpha,
+   because of a compiler bug that affects the perl 'x' operator.
+   The Digest:: modules should work and be safe to install anyway.
+
+
+
 1998-12-18   Gisle Aas <aas@sn.no>
 
    Release 2.01
