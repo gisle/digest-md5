@@ -1,3 +1,12 @@
+2000-09-18   Gisle Aas <gisle@ActiveState.com>
+
+   Release 2.12
+
+   Avoid pointer cast warning for machines with bigger ints
+   than pointers.  Patch by Robin Barker <rmb1@cise.npl.co.uk>.
+
+
+
 2000-08-19   Gisle Aas <gisle@ActiveState.com>
 
    Release 2.11
