@@ -58,6 +58,14 @@ of C<Digest::MD5>.
 
 L<Digest::MD5>
 
+=head1 COPYRIGHT
+
+This library is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
+
+ Copyright 1998 Gisle Aas.
+ Copyright 1990-1992 RSA Data Security, Inc.
+
 =head1 AUTHOR
 
 Gisle Aas <gisle@aas.no>
