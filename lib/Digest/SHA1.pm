@@ -64,6 +64,6 @@ require Exporter;
 
 sub sha1          {  Digest::SHA1->new->add(@_)->digest;    }
 sub sha1_hex      {  Digest::SHA1->new->add(@_)->hexdigest; }
-sub sha1_basse64  {  Digest::SHA1->new->add(@_)->b64digest; }
+sub sha1_base64   {  Digest::SHA1->new->add(@_)->b64digest; }
 
 1;
