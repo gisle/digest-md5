@@ -3,8 +3,11 @@ print "1..5\n";
 use strict;
 use MD5 qw(md5 md5_hex md5_base64);
 
+#
+# This is the output of: 'md5sum Changes README MD5.pm MD5.xs rfc1321.txt'
+#
 my $EXPECT = <<EOT;
-c9c8785e904d63b0ec0dd62978dc8060  Changes
+79adf18cbeaef61df1deac95e836beb0  Changes
 1adb532cdeaaf324e9ed19a09dbf8f22  README
 197c1acb82fe6aba4f251ba67b745282  MD5.pm
 48d5b9e9c0a9555e67c1271aad4307c4  MD5.xs
