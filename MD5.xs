@@ -84,6 +84,11 @@ extern "C" {
    #define SvPVbyte SvPV
 #endif
 
+#ifndef dTHX
+   #define pTHX_
+   #define aTHX_
+#endif
+
 /* Perl does not guarantee that U32 is exactly 32 bits.  Some system
  * has no integral type with exactly 32 bits.  For instance, A Cray has
  * short, int and long all at 64 bits so we need to apply this macro
