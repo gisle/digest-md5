@@ -7,6 +7,7 @@ MD2/rfc1319.txt		The MD2 Message-Digest Algorithm
 MD2/t/md2.t		Test if Digest::MD2 works
 MD2/typemap		Supplementary typemap
 MD5.pm			Digest::MD5 Perl Module
+hints/irix_6.pl		Workaround for IRIX compiler bug
 lib/MD5.pm		MD5 backwards compatibility stuff
 lib/Digest.pm		Loading frontend
 lib/Digest/HMAC.pm      HMAC implementation
@@ -15,7 +16,6 @@ lib/Digest/HMAC_SHA1.pm HMAC using SHA-1
 MD5.xs			MD5 Perl 'XS' source file
 typemap			Supplementary typemap
 Makefile.PL		Perl Makefile builder
-irix6.patch		Hint about building on SGI IRIX
 rfc1321.txt		The MD5 Message-Digest Algorithm
 rfc2104.txt		HMAC: Keyed-Hashing for Message Authentication
 t/digest.t		Test Digest.pm loader
