@@ -1,9 +1,9 @@
-package MD5;
+package Digest::MD5;
 
 use strict;
 use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = '1.9952';  # $Date$
+$VERSION = '1.9953';  # $Date$
 
 require Exporter;
 *import = \&Exporter::import;
@@ -11,19 +11,9 @@ require Exporter;
 
 require DynaLoader;
 @ISA=qw(DynaLoader);
-MD5->bootstrap($VERSION);
+Digest::MD5->bootstrap($VERSION);
 
 *reset = \&new;
-
-sub hash
-{
-    new(@_)->digest;
-}
-
-sub hexhash
-{
-    new(@_)->hexdigest;
-}
 
 1;
 __END__

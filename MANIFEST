@@ -1,6 +1,7 @@
 README			Guess what?
 MANIFEST		This file
-MD5.pm			MD5 Perl Module
+MD5.pm			Digest::MD5 Perl Module
+lib/MD5.pm		MD5 backwards compatibility stuff
 MD5.xs			MD5 Perl 'XS' source file
 typemap			Supplementary typemap
 Makefile.PL		Perl Makefile builder

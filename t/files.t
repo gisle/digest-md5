@@ -1,7 +1,7 @@
 print "1..5\n";
 
 use strict;
-use MD5 qw(md5 md5_hex md5_base64);
+use Digest::MD5 qw(md5 md5_hex md5_base64);
 
 #
 # This is the output of: 'md5sum Changes README MD5.pm MD5.xs rfc1321.txt'
@@ -9,8 +9,8 @@ use MD5 qw(md5 md5_hex md5_base64);
 my $EXPECT = <<EOT;
 79adf18cbeaef61df1deac95e836beb0  Changes
 1adb532cdeaaf324e9ed19a09dbf8f22  README
-197c1acb82fe6aba4f251ba67b745282  MD5.pm
-48d5b9e9c0a9555e67c1271aad4307c4  MD5.xs
+905231daef1a191c21427bdaed312bb8  MD5.pm
+c8d0c40cfd501cbf07f577267dbfd41b  MD5.xs
 754b9db19f79dbc4992f7166eb0f37ce  rfc1321.txt
 EOT
 
@@ -67,15 +67,15 @@ for (split /^/, $EXPECT) {
 	 $failed++;
      }
 
-     if (MD5->new->add($data)->digest ne $md5bin) {
+     if (Digest::MD5->new->add($data)->digest ne $md5bin) {
 	 print "$file: MD5->new->add(...)->digest failed\n";
 	 $failed++;
      }
-     if (MD5->new->add($data)->hexdigest ne $md5hex) {
+     if (Digest::MD5->new->add($data)->hexdigest ne $md5hex) {
 	 print "$file: MD5->new->add(...)->hexdigest failed\n";
 	 $failed++;
      }
-     if ($B64 && MD5->new->add($data)->b64digest ne $md5b64) {
+     if ($B64 && Digest::MD5->new->add($data)->b64digest ne $md5b64) {
 	 print "$file: MD5->new->add(...)->b64digest failed\n";
 	 $failed++;
      }
@@ -85,11 +85,11 @@ for (split /^/, $EXPECT) {
 	 print "$file: md5(\@data) failed\n";
 	 $failed++;
      }
-     if (MD5->new->add(@data)->digest ne $md5bin) {
+     if (Digest::MD5->new->add(@data)->digest ne $md5bin) {
 	 print "$file: MD5->new->add(\@data)->digest failed\n";
 	 $failed++;
      }
-     my $md5 = MD5->new;
+     my $md5 = Digest::MD5->new;
      for (@data) {
 	 $md5->add($_);
      }
@@ -111,7 +111,7 @@ sub digest_file
 
     open(FILE, $file) or die "Can't open $file: $!";
     binmode(FILE);
-    my $digest = MD5->new->addfile(*FILE)->$method();
+    my $digest = Digest::MD5->new->addfile(*FILE)->$method();
     close(FILE);
 
     $digest;
