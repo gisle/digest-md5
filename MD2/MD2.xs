@@ -39,6 +39,10 @@ extern "C" {
 }
 #endif
 
+#if PATCHLEVEL < 5 && SUBVERSION < 5
+   #define PL_na na
+#endif
+
 typedef struct {
   unsigned char state[16];                                 /* state */
   unsigned char checksum[16];                           /* checksum */
@@ -279,7 +283,7 @@ new(xclass)
 	MD2_CTX* context;
     PPCODE:
 	if (!SvROK(xclass)) {
-	    char *sclass = SvPV(xclass, na);
+	    char *sclass = SvPV(xclass, PL_na);
 	    New(55, context, 1, MD2_CTX);
 	    ST(0) = sv_newmortal();
 	    sv_setref_pv(ST(0), sclass, (void*)context);
