@@ -8,6 +8,7 @@ use Digest::MD2 ();
 $md5 = Digest::MD2->new;
 
 eval {
+   use vars qw(*FOO);
    $md5->addfile(*FOO);
 };
 print "not " unless $@ =~ /^Bad filehandle: FOO/;

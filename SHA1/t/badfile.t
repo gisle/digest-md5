@@ -8,6 +8,7 @@ use Digest::SHA1 ();
 $md5 = Digest::SHA1->new;
 
 eval {
+   use vars qw(*FOO);
    $md5->addfile(*FOO);
 };
 print "not " unless $@ =~ /^Bad filehandle: FOO/;
