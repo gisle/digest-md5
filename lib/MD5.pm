@@ -1,7 +1,7 @@
 package MD5;  # legacy stuff
 
 use strict;
-use vars qw($VERSION @ISA @EXPORT_OK);
+use vars qw($VERSION @ISA);
 
 $VERSION = '2.00';  # $Date$
 
