@@ -1,28 +1,63 @@
 #include <stdio.h>
 #include <string.h>
 
-#define BYTEORDER 0x4321
 #define MD5_DEBUG
 
-typedef unsigned int UINT;
+#define BYTEORDER 0x123
+
 typedef unsigned int U32;
-typedef unsigned char UCHAR;
+typedef unsigned char U8;
+typedef unsigned int STRLEN;
 
-#define TO32(l)    (l)
-#define TRUNC32(l)
+#if defined __STDC__ && __STDC__
+  #define MAX_32 4294967295U
+#else
+  #define MAX_32 0xFFFFFFFF
+#endif
 
-#if BYTEORDER == 0x1234 || BYTEORDER == 0x12345678
-#define byteswap(x) (x)
-#elif BYTEORDER == 0x4321  || BYTEORDER == 0x87654321
-#define byteswap(x) 	((((x)&0xFF)<<24)	\
+/* Perl does not guarantee that U32 is exactly 32 bits.  Some system
+ * has no integral type with exactly 32 bits.
+ * A Cray has short, int and long all at 64 bits so we need to apply this
+ * macro to reduce U32 values to 32 bits at appropriate places. If U32
+ * really does have 32 bits then this is a no-op.
+ */
+#if U32_MAX > MAX_32 || defined(TRUNCATE_U32)
+  #define TO32(x)    ((x) & MAX_32)
+  #define TRUNC32(x) ((x) &= MAX_32)
+#else
+  #define TO32(x)    (x)
+  #define TRUNC32(x) /*nothing*/
+#endif
+
+#if BYTEORDER == 0x1234       /* 32-bit little endian */
+  #define byteswap(x) (x)
+#elif  BYTEORDER == 0x4321    /* 32-bit big endian */
+  #define byteswap(x) 	((((x)&0xFF)<<24)	\
 			|(((x)>>24)&0xFF)	\
 			|(((x)&0x0000FF00)<<8)	\
 			|(((x)&0x00FF0000)>>8)	)
-#else
+#else                         /* something else */
+  #ifdef byteswap
+      #undef byteswap
+  #endif
 
-static U32 byteswap(U32 x);  /* function */
+static void u2s(U32 u, U8* s)
+{
+    *s++ = u         & 0xFF;
+    *s++ = (u >>  8) & 0xFF;
+    *s++ = (u >> 16) & 0xFF;
+    *s   = (u >> 24) & 0xFF;
+}
 
-#endif
+static void s2u(const U8* s, U32* u)
+{
+    *u = (U8)(*s++)       |
+         (U8)(*s++ << 8)  |
+         (U8)(*s++ << 16) |
+         (U8)(*s   << 24);
+}
+
+#endif                        /* endianness test */
 
 #ifdef MD5_DEBUG
 static void my_memcpy(char *b, char*d, const char*s, unsigned int len)
@@ -38,7 +73,7 @@ typedef struct {
   U32 A, B, C, D;
   U32 bytes_low;
   U32 bytes_high;
-  UCHAR buffer[128];
+  U8 buffer[128];
 } MD5_CTX;
 
 static unsigned char PADDING[64] = {
@@ -122,7 +157,7 @@ MD5Init(MD5_CTX *ctx)
 }
 
 static void
-MD5Transform(MD5_CTX* ctx, const void* buf, UINT blocks)
+MD5Transform(MD5_CTX* ctx, const void* buf, STRLEN blocks)
 {
   static int tcount = 0;
 
@@ -141,12 +176,16 @@ MD5Transform(MD5_CTX* ctx, const void* buf, UINT blocks)
 
 #if BYTEORDER == 0x1234
     const U32 *X = x;
-    #define NEXTx *x++
+    #define NEXTx  (*x++)
 #else
     U32 X[16];
-    U32 *saveswapped = X;
+    U32 *uptr = X;
     U32 tmp;
-    #define NEXTx tmp=*x++, *saveswapped++ = byteswap(tmp)
+    #ifdef byteswap
+      #define NEXTx  (tmp=*x++, *uptr++ = byteswap(tmp))
+    #else
+      #define NEXTx  (s2u(buf,&tmp), buf += 4, *uptr++ = tmp)
+    #endif
 #endif
 
 #ifdef MD5_DEBUG
@@ -255,7 +294,8 @@ static char*
 ctx_dump(MD5_CTX* ctx)
 {
   static char buf[1024];
-  sprintf(buf, "{A,B,C,D,%d,%d,%d}",
+  sprintf(buf, "{A=%x,B=%x,C=%x,D=%x,%d,%d(%d)}",
+	       ctx->A, ctx->B, ctx->C, ctx->D,
 	       ctx->bytes_low, ctx->bytes_high, (ctx->bytes_low&0x3F));
   return buf;
 }
@@ -263,10 +303,10 @@ ctx_dump(MD5_CTX* ctx)
 
 
 static void
-MD5Update(MD5_CTX* ctx, const void* buf, UINT len)
+MD5Update(MD5_CTX* ctx, const U8* buf, STRLEN len)
 {
-  UINT blocks;
-  UINT fill = ctx->bytes_low & 0x3F;
+  STRLEN blocks;
+  STRLEN fill = ctx->bytes_low & 0x3F;
 
 #ifdef MD5_DEBUG  
   static int ucount = 0;
@@ -278,7 +318,7 @@ MD5Update(MD5_CTX* ctx, const void* buf, UINT len)
     ctx->bytes_high++;
 
   if (fill) {
-    UINT missing = 64 - fill;
+    STRLEN missing = 64 - fill;
     if (len < missing) {
       memcpy(ctx->buffer + fill, buf, len);
       return;
@@ -298,28 +338,47 @@ MD5Update(MD5_CTX* ctx, const void* buf, UINT len)
 }
 
 static void
-MD5Final(UCHAR* digest, MD5_CTX *ctx)
+MD5Final(U8* digest, MD5_CTX *ctx)
 {
 
-  UINT fill = ctx->bytes_low & 0x3F;
-  UINT padlen = (fill < 56 ? 56 : 120) - fill;
+  STRLEN fill = ctx->bytes_low & 0x3F;
+  STRLEN padlen = (fill < 56 ? 56 : 120) - fill;
 #ifdef MD5_DEBUG
-  printf("       Final: %s\n", ctx_dump(ctx));
+  printf("       Final:  %s\n", ctx_dump(ctx));
 #endif
   memcpy(ctx->buffer + fill, PADDING, padlen);
   fill += padlen;
 
+#ifdef byteswap
   *(U32*)(ctx->buffer + fill) = byteswap(ctx->bytes_low << 3);
   fill += 4;
-  *(U32*)(ctx->buffer + fill) = byteswap((ctx->bytes_high << 3) ||
+  *(U32*)(ctx->buffer + fill) = byteswap((ctx->bytes_high << 3) |
 					 (ctx->bytes_low  >> 29));
   fill += 4;
-  MD5Transform(ctx, ctx->buffer, fill >> 6);
+#else
+  u2s(TO32(ctx->bytes_low << 3), ctx->buffer + fill);
+  fill += 4;
+  u2s(TO32((ctx->bytes_high << 3) | (ctx->bytes_low  >> 29)),
+      ctx->buffer + fill);
+  fill += 4;
+#endif
 
+  MD5Transform(ctx, ctx->buffer, fill >> 6);
+#ifdef MD5_DEBUG
+  printf("       Result: %s\n", ctx_dump(ctx));
+#endif
+
+#ifdef byteswap
   *(U32*)digest = byteswap(ctx->A);  digest += 4;
   *(U32*)digest = byteswap(ctx->B);  digest += 4;
   *(U32*)digest = byteswap(ctx->C);  digest += 4;
   *(U32*)digest = byteswap(ctx->D);
+#else
+  u2s(ctx->A, digest);
+  u2s(ctx->B, digest+4);
+  u2s(ctx->C, digest+8);
+  u2s(ctx->D, digest+12);
+#endif
 }
 
 //--------------------------------
