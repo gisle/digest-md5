@@ -1,3 +1,12 @@
+1998-10-23   Gisle Aas <aas@sn.no>
+
+   Release 1.99_52
+
+   Patch from Graham Barr which make it work for big-endian machines
+   again.
+
+
+
 1998-10-22   Gisle Aas <aas@sn.no>
 
    Release 1.99_51
