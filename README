@@ -1,24 +1,15 @@
-MD5 Extension
--------------
+Digest::MD5
+-----------
 
 This is a Perl5 extension interface to the RSA Data Security Inc. MD5
-Message Digest algorithm.
+Message Digest algorithm.  We also provide modules to do HMAC.
 
 To build the extension, unpack this distribution somewhere, create the
-Makefile using 'perl Makefile.PL' and do a 'make' and 'make install'.
+Makefile using 'perl Makefile.PL' and do a 'make', 'make test', and if
+successful 'make install'.
 
-The mddriver.pl script gives a simple example of how to use the
-routines. In particular 'perl mddriver.pl -x' will perform a quick
-test of the routines to see if they produce the expected output. The
-use of "make test" will perform a more comprehensive test.
-
-The module is known to work on at least Linux, AIX, Solaris, HP-UX and
-IRIX. It should work on other "reasonable" UNIX-like platforms (for an
-unspecified definition of the word "reasonable" :-)
-
-Support is also provided for 64-bit platforms. This should be detected
-and handled automatically. See the entry for version 1.7 in the
-Changes file for further details.
+You will need perl version 5.004 or better to install this module.
+Futher documentation is embedded in the individual modules.
 
 Copyright 1998 Gisle Aas.
 Copyright 1995-1996 Neil Winton.
@@ -27,10 +18,5 @@ Copyright 1991-1992 RSA Data Security, Inc.
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
-This version of MD5.pm is released by Gisle Aas <gisle@aas.no>.  It
-was based on MD5-1.7 made by Neil Winton.
-
-*   Neil Winton			Post Point P5		*
-*   N.Winton@axion.bt.co.uk	BT Laboratories		*
-*   Tel +44 1473 646079		Martlesham Heath	*
-*   Fax +44 1473 643306		IPSWICH IP5 7RE, UK	*
+The Digest::MD5 module is developed by by Gisle Aas <gisle@aas.no>.
+It is based on MD5-1.7 made by Neil Winton.
