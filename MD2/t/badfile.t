@@ -17,5 +17,5 @@ print "ok 1\n";
 open(BAR, "none-existing-file.$$");
 $md5->addfile(*BAR);
 
-print "not " unless $md5->hexdigest eq "d41d8cd98f00b204e9800998ecf8427e";
+print "not " unless $md5->hexdigest eq Digest::MD2->new->hexdigest;
 print "ok 2\n";
