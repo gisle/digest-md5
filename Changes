@@ -8,6 +8,8 @@ Revision history for Perl extension MD5.
    because we use Copy/Zero instead of the original MD5_memcpy and
    MD5_memset functions.
 
+   The addfile() and hexdigest() methods are now XS implemented.
+
    All RSA functions now included in MD5.xs and made static.
 
    Use perl's Copy/Zero.
