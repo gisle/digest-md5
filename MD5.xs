@@ -626,14 +626,31 @@ md5(...)
 	unsigned char digeststr[16];
     PPCODE:
 	MD5Init(&ctx);
-	if (PL_dowarn && items > 1) {
-	    data = (unsigned char *)SvPVbyte(ST(0), len);
-	    if (len == 11 && memEQ("Digest::MD5", data, 11)) {
-	         char *f = (ix == F_BIN) ? "md5" :
-                           (ix == F_HEX) ? "md5_hex" : "md5_base64";
-	         warn("&Digest::MD5::%s function probably called as method", f);
-            }
+
+	if (PL_dowarn) {
+            char *msg = 0;
+	    if (items == 1) {
+		if (SvROK(ST(0))) {
+                    SV* sv = SvRV(ST(0));
+		    if (SvOBJECT(sv) && strEQ(HvNAME(SvSTASH(sv)), "Digest::MD5"))
+		        msg = "probably called as method";
+		    else
+			msg = "called with reference argument";
+		}
+	    }
+	    else if (items > 1) {
+		data = (unsigned char *)SvPVbyte(ST(0), len);
+		if (len == 11 && memEQ("Digest::MD5", data, 11)) {
+		    msg = "probably called as class method";
+		}
+	    }
+	    if (msg) {
+		char *f = (ix == F_BIN) ? "md5" :
+                          (ix == F_HEX) ? "md5_hex" : "md5_base64";
+	        warn("&Digest::MD5::%s function %s", f, msg);
+	    }
 	}
+
 	for (i = 0; i < items; i++) {
 	    data = (unsigned char *)(SvPVbyte(ST(i), len));
 	    MD5Update(&ctx, data, len);
