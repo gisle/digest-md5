@@ -3,7 +3,7 @@ package Digest::MD5;
 use strict;
 use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = '1.9954';  # $Date$
+$VERSION = '1.9955';  # $Date$
 
 require Exporter;
 *import = \&Exporter::import;
@@ -205,7 +205,8 @@ Or we can use the builtin addfile method to read the file much faster:
 
 =head1 SEE ALSO
 
-L<SHA>, L<HMAC::MD5>,
+L<Digest::SHA1>,
+L<Digest::HMAC>,
 L<MIME::Base64>
 
 =head1 COPYRIGHT
