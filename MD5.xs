@@ -555,21 +555,23 @@ addfile(self, fh)
 	unsigned char buffer[4096];
 	int  n;
     CODE:
-        if (fill) {
-	    /* The MD5Update() function is faster if it can work with
-	     * complete blocks.  This will fill up any buffered block
-	     * first.
-	     */
-	    STRLEN missing = 64 - fill;
-	    if ( (n = PerlIO_read(fh, buffer, missing)))
-		MD5Update(context, buffer, n);
-	    else
-		XSRETURN(1);  /* self */
-	}
+	if (fh) {
+            if (fill) {
+	        /* The MD5Update() function is faster if it can work with
+	         * complete blocks.  This will fill up any buffered block
+	         * first.
+	         */
+	        STRLEN missing = 64 - fill;
+	        if ( (n = PerlIO_read(fh, buffer, missing)))
+	 	    MD5Update(context, buffer, n);
+	        else
+		    XSRETURN(1);  /* self */
+	    }
 
-	/* Process blocks until EOF */
-        while ( (n = PerlIO_read(fh, buffer, sizeof(buffer)))) {
-	    MD5Update(context, buffer, n);
+	    /* Process blocks until EOF */
+            while ( (n = PerlIO_read(fh, buffer, sizeof(buffer)))) {
+	        MD5Update(context, buffer, n);
+	    }
 	}
 	XSRETURN(1);  /* self */
 
