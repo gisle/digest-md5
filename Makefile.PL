@@ -136,15 +136,14 @@ EOT
     return 1 unless $rc;
 
     if ($rc > 0x80) {
-	$rc >>= 8;
-	print "Test program exit status was $rc\n";
-    } else {
-	if ($rc & 0x80) {
-	    $rc &= ~0x80;
-	    print "Core dump deleted\n";
-	    unlink("core");
-	}
-	print "signal $rc\n";
+	(my $cp = $rc) >>= 8;
+	print "Test program exit status was $cp\n";
     }
+    if ($rc & 0x80) {
+	$rc &= ~0x80;
+	print "Core dump deleted\n";
+	unlink("core");
+    }
+    print "signal $rc\n";
     return 0;
 }
