@@ -6,7 +6,7 @@
    instead.
 
    Give warning if the function interface is used as instance
-   methods as well.  $md5->md5_hex().
+   methods:  $md5->md5_hex().
 
 
 
