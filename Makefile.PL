@@ -141,9 +141,8 @@ EOT
     }
     if ($rc & 0x80) {
 	$rc &= ~0x80;
-	print "Core dump deleted\n";
-	unlink("core");
+	unlink("core") && print "Core dump deleted\n";
     }
-    print "signal $rc\n";
+    print "signal $rc\n" if $rc && $rc < 0x80;
     return 0;
 }
