@@ -1,0 +1,101 @@
+Revision history for Perl extension MD5.
+
+1998-10-22   Gisle Aas <aas@sn.no>
+
+   Release 1.99_50
+
+   Much better performance (more than twice as fast now).  Mostly
+   because we use Copy/Zero instead of the original MD5_memcpy and
+   MD5_memset functions.
+
+   All RSA functions now included in MD5.xs and made static.
+
+   Use perl's Copy/Zero.
+
+   Random cleanup, simplifications and reformatting.
+   Merged things better with the perl configuration.
+
+
+
+Neil Winton's versions:
+
+
+*** 96/06/20 Version 1.7
+
+MD5 is now completely 64-bit clean (I hope). The basic MD5 code uses
+32-bit quantities and requires a typedef UINT4 to be defined in
+global.h. Perl configuration data (the value of BYTEORDER) is used to
+determine if unsigned longs have 4 or 8 bytes. On 64-bit platforms (eg
+DEC Alpha) then it assumes that "unsigned int" will be a 32-bit type.
+If this is incorrect then adding -DUINT4_IS_LONG to the DEFINES line in
+Makefile.PL will override this.
+
+On some machines (at least Cray that I know of) there is no 32-bit
+integer type. In this case defining TRUNCATE_UINT4 (which is done
+automatically for a Cray) will ensure that 64-bit values are masked
+down to 32 bits. I have done my best to test this but without easy
+access to a true 64-bit machine I can not totally guarantee it (unless
+anyone wants to lend me a spare Cray :-)
+
+There is one remaining limitation for 64-bit enabled processors. The
+amount of data passed to any single call to the underlying MD5
+routines is limited to (2^32 - 1) bytes -- that's 4 gigabytes. I'm
+sorry if that's a real problem for you ...
+
+And finally, a minor complilation warning (unsigned char * used with
+function having char * prototype) has also been eliminated.
+
+*** 96/04/09 Version 1.6
+
+Re-generated module framework using h2xs to pick up the latest module
+conventions for versions etc. You can now say "use MD5 1.6;" and things
+should work correctly. MD5.pod has been integrated into MD5.pm and
+CHANGES renamed to Changes. There is a fairly comprehensive test.pl
+which can be invoked via "make test". There are no functional changes
+to the MD5 routines themselves.
+
+*** 96/03/14 Version 1.5.3
+
+Fixed addfile method to accept type-glob references for the file-handle
+(eg \*STDOUT). This is more consistent with other routines and is now the
+recommended way of passing file-handles. The documentation now gives more
+examples as to how the routines might be used.
+
+*** 96/03/12 Version 1.5.2
+
+Minor fixes from Christopher J Madsen <madsen@computek.net> to provide
+support for building on OS/2 (and to work arround a perl -w bug).
+
+Remove warning about possible difference between add('foo', 'bar') and
+add('foobar'). This is not true (it may have been true in the earliest
+version of the module but is no longer the case).
+
+*** 96/03/08 Version 1.5.1
+
+Add CHANGES file to make it easier for people to figure out what has
+been going on. (Meant to do this as part of 1.5)
+
+*** 96/03/05 Version 1.5
+
+Add hash() and hexhash() methods at the suggestion/request of Gary
+Howland <gary@kampai.euronet.nl> before inclusion in a wider library
+of cryptography modules.
+
+*** 96/02/27 Version 1.4
+
+Finally fixed the pesky Solaris dynamic loading bug. All kudos to Ken
+Pizzini <kenp@spry.com>!
+
+*** 95/11/29 Version 1.3.1
+
+Add explanations of current known problems.
+
+*** 95/06/02 Version 1.3
+
+Fix problems with scope resolution in addfile() reported by
+Jean-Claude Giese <Jean-Claude.Giese@loria.fr>. Basically ARGV is
+always implicitly in package main while other filehandles aren't.
+ 
+*** 95/05/23 Version 1.2.1
+
+[Changes pre 1.2.1 not recorded]

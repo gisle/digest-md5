@@ -1,0 +1,10 @@
+MD5_CTX*	T_MD5_CTX
+
+INPUT
+T_MD5_CTX
+	$var = get_md5_ctx($arg)
+
+OUTPUT
+T_MD5_CTX
+	sv_setref_pv($arg, \"MD5\", (void*)$var);
+	SvREADONLY_on(SvRV($arg));

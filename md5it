@@ -1,0 +1,25 @@
+#!/usr/bin/perl -w
+
+use strict;
+use MD5;
+
+my $root = shift || "/";
+my $count = shift || 100;
+
+
+open(FILES, "find $root -type f -print|") or die;
+
+while (<FILES>) {
+    chomp;
+    unless (open(FILE, $_)) {
+	print " "x32, "  $_: $!\n";
+	next;
+    }
+
+    my $md5 = MD5->new;
+    $md5->addfile(\*FILE);
+    print $md5->hexdigest, "  $_\n";
+
+    last if --$count < 0;
+}
+
