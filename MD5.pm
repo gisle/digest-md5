@@ -190,8 +190,8 @@ C<binmode> before you pass it as argument to the addfile() method.
 Since the MD5 algorithm is byte oriented you might only add bits as
 multiples of 8, so you probably want to just use add() instead.  The
 add_bits() method is provided for compatibility with other digest
-implementations.  See L<Digest> for description arguments to
-add_bits().
+implementations.  See L<Digest> for description of the arguments
+that add_bits() take.
 
 =item $md5->digest
 
