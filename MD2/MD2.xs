@@ -280,8 +280,8 @@ new(xclass)
 	MD2_CTX* context;
     PPCODE:
 	if (!SvROK(xclass)) {
-	    STRLEN na;
-	    char *sclass = SvPV(xclass, na);
+	    STRLEN my_na;
+	    char *sclass = SvPV(xclass, my_na);
 	    New(55, context, 1, MD2_CTX);
 	    ST(0) = sv_newmortal();
 	    sv_setref_pv(ST(0), sclass, (void*)context);
