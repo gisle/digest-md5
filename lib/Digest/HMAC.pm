@@ -25,8 +25,8 @@ sub reset
     $self;
 }
 
-sub add     { shift->{hasher}->add(@_)     }
-sub addfile { shift->{hasher}->addfile(@_) }
+sub add     { my $self = shift; $self->{hasher}->add(@_);     $self; }
+sub addfile { my $self = shift; $self->{hasher}->addfile(@_); $self; }
 
 sub _digest
 {
