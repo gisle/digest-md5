@@ -90,7 +90,7 @@ EOT
 	$cc_cmd .= " -o $exe";
     }
     my $rc;
-    $rc = system("$cc_cmd u32align.c");
+    $rc = system("$cc_cmd $Config{ldflags} u32align.c $Config{libs}");
     if ($rc) {
 	print "Can't compile test program\n";
 	unlink("u32align.c", $exe, "u32align$Config{_o}");
