@@ -11,6 +11,8 @@
 **	GNU or Artistic licences. See the file MD5.pm for more details.
 */
 
+/* $Id$ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -141,8 +143,21 @@ static unsigned char PADDING[64] = {
 
 #if BYTEORDER == 0x1234  /* 32bit little endian */
 
-   #define Encode(output, input, len)  Copy(input, output, len, char)
-   #define Decode(output, input, len)  Copy(input, output, len, char)
+#define Encode(output, input, len)  Copy(input, output, len, char)
+#define Decode(output, input, len)  Copy(input, output, len, char)
+
+#elif BYTEORDER == 0x4321 && defined(HAS_HTOVL)  /* 32bit big endian */
+
+static void memcpy_byteswap(long *dest, const long* src, unsigned int len)
+{
+    len /= 4;
+    while (len--) *dest++ = htovl(*src++);
+}
+
+#define MEMCPY_BYTESWAP(d,s,l) memcpy_byteswap((long*)(d), (long*)(s), (l))
+
+#define Encode MEMCPY_BYTESWAP
+#define Decode MEMCPY_BYTESWAP
 
 #else
 
@@ -154,11 +169,6 @@ unsigned char *output;
 UINT4 *input;
 unsigned long len;
 {
-#if BYTEORDER == 0x4321 && defined(HAS_HTONL)
-    long *out = (long*)output;
-    len /= 4;
-    while (len--) *out++ =  htovl(*input++);
-#else
     unsigned long i, j;
     for (i = 0, j = 0; j < len; i++, j += 4) {
 	output[j] = (unsigned char)(input[i] & 0xff);
@@ -166,7 +176,6 @@ unsigned long len;
 	output[j+2] = (unsigned char)((input[i] >> 16) & 0xff);
 	output[j+3] = (unsigned char)((input[i] >> 24) & 0xff);
     }
-#endif
 }
 
 /* Decodes input (unsigned char) into output (UINT4). Assumes len is
@@ -177,16 +186,10 @@ UINT4 *output;
 unsigned char *input;
 unsigned long len;
 {
-#if BYTEORDER == 0x4321 && defined(HAS_HTONL)
-    long *in = (long*)input;
-    len /= 4;
-    while (len--) *output++ = htovl(*input++);
-#else
     unsigned long i, j;
     for (i = 0, j = 0; j < len; i++, j += 4)
 	output[i] = ((UINT4)input[j]) | (((UINT4)input[j+1]) << 8) |
 	           (((UINT4)input[j+2]) << 16) | (((UINT4)input[j+3]) << 24);
-#endif
 }
 
 #endif /* 32bit little endian */
@@ -507,7 +510,7 @@ b64digest(context)
 SV*
 md5(...)
     ALIAS:
-	Digest::MD5::md5_bin    = 1
+	Digest::MD5::md5        = 1
 	Digest::MD5::md5_hex    = 2
 	Digest::MD5::md5_base64 = 3
     PREINIT:
