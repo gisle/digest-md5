@@ -1,8 +1,107 @@
 require 5.004;
+use strict;
+use Config qw(%Config);
 use ExtUtils::MakeMaker;
+
+my @extra;
+@extra = (DEFINE => "-DU32_ALIGNMENT_REQUIRED") unless free_u32_alignment();
 
 WriteMakefile(
     'NAME'	   => 'Digest::MD5',
     'VERSION_FROM' => 'MD5.pm',
+    @extra,
     'dist'         => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
 );
+exit;
+
+#--------------
+
+
+sub free_u32_alignment
+{
+    $|=1;
+    print "Testing alignment requirements for U32... ";
+
+    open(ALIGN_TEST, ">u32align.c") or die "$!";
+    print ALIGN_TEST <<'EOT'; close(ALIGN_TEST);
+/*--------------------------------------------------------------*/
+#include <stdio.h>
+
+/* some perl headers */
+#include "EXTERN.h"
+#include "config.h"
+#include "handy.h"
+
+int main(int argc, char* argv[])
+{
+#if BYTEORDER == 0x1234 || BYTEORDER == 0x4321
+    U8 buf[] = "\0\0\0\1\0\0\0\0";
+    U32 *up;
+    int i;
+
+    if (sizeof(U32) != 4) {
+	printf("sizeof(U32) is not 4, but %d\n", sizeof(U32));
+	exit(1);
+    }
+
+    fflush(stdout);
+
+    for (i = 0; i < 4; i++) {
+	up = (U32*)(buf + i);
+	if (! ((*up == 1 << (8*i)) ||   /* big-endian */
+	       (*up == 1 << (8*(3-i)))  /* little-endian */
+	      )
+	   )
+	{
+	    printf("This should not happen!\n");
+	    exit(3);
+	}
+    }
+
+    /* write test */
+    for (i = 0; i < 4; i++) {
+	up = (U32*)(buf + i);
+	*up = 0xBeef;
+	if (*up != 0xBeef) {
+	    printf("write failed\n");
+	    exit(2);
+	}
+    }
+
+    printf("no restrictions\n");
+    exit(0);
+#else
+    printf("unusual byteorder, playing safe\n");
+    exit(1);
+#endif
+}
+/*--------------------------------------------------------------*/
+EOT
+
+    my $cc_cmd = "$Config{cc} $Config{ccflags} -I$Config{archlibexp}/CORE";
+    my $rc;
+    $rc = system("$cc_cmd -o u32align u32align.c");
+    if ($rc) {
+	print "Can't compile test program\n";
+	unlink("u32align.c", "u32align");
+	return;
+    }
+
+    $rc = system("./u32align");
+    unlink("u32align.c", "u32align");
+
+    return 1 unless $rc;
+
+    if ($rc > 0x80) {
+	$rc >>= 8;
+	print "Test program exit status was $rc\n";
+    } else {
+	if ($rc & 0x80) {
+	    $rc &= ~0x80;
+	    print "Core dump deleted\n";
+	    unlink("core");
+	}
+	print "signal $rc\n";
+    }
+    return;
+}
