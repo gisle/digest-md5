@@ -51,7 +51,7 @@ extern "C" {
 
 #ifdef SvPVbyte
    #if PERL_REVISION == 5 && PERL_VERSION < 7
-       /* SvPVbyte does not work in perl-5.6.1 */
+       /* SvPVbyte does not work in perl-5.6.1, borrowed version for 5.7.3 */
        #undef SvPVbyte
        #define SvPVbyte(sv, lp) \
 	  ((SvFLAGS(sv) & (SVf_POK|SVf_UTF8)) == (SVf_POK) \
