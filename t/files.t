@@ -7,10 +7,10 @@ use Digest::MD5 qw(md5 md5_hex md5_base64);
 # This is the output of: 'md5sum Changes README MD5.pm MD5.xs rfc1321.txt'
 #
 my $EXPECT = <<EOT;
-8550fc33f69e0278f3cd7dba2850af2c  Changes
+cb984d28ca96a218ed5ba07f67f9b839  Changes
 e2447354c8b24340bc49e38f8d00bf3b  README
-8bac269798ac18107a0751b02e1e1049  MD5.pm
-6d2c4ebfc31d14e70afa299958fecbf5  MD5.xs
+6434081de53f37d982f1f8ee5e7f77b7  MD5.pm
+f0ee3da0569b0e72b49c405a29b52326  MD5.xs
 754b9db19f79dbc4992f7166eb0f37ce  rfc1321.txt
 EOT
 
