@@ -92,10 +92,12 @@ static void u2s(U32 u, U8* s)
                         ((U32)(*(s+3)) << 24))
 #endif
 
+#define MD5_CTX_SIGNATURE 200003165
 
 /* This stucture keeps the current state of algorithm.
  */
 typedef struct {
+  U32 signature;   /* safer cast in get_md5_ctx() */
   U32 A, B, C, D;  /* current digest */
   U32 bytes_low;   /* counts bytes in message */
   U32 bytes_high;  /* turn it into a 64-bit counter */
@@ -418,8 +420,15 @@ MD5Final(U8* digest, MD5_CTX *ctx)
 
 static MD5_CTX* get_md5_ctx(SV* sv)
 {
-    if (sv_derived_from(sv, "Digest::MD5"))
-	return (MD5_CTX*)SvIV(SvRV(sv));
+    if (SvROK(sv)) {
+	sv = SvRV(sv);
+	if (SvIOK(sv)) {
+	    MD5_CTX* ctx = (MD5_CTX*)SvIV(sv);
+	    if (ctx && ctx->signature == MD5_CTX_SIGNATURE) {
+		return ctx;
+            }
+        }
+    }
     croak("Not a reference to a Digest::MD5 object");
     return (MD5_CTX*)0; /* some compilers insist on a return value */
 }
@@ -515,6 +524,7 @@ new(xclass)
 	    STRLEN my_na;
 	    char *sclass = SvPV(xclass, my_na);
 	    New(55, context, 1, MD5_CTX);
+	    context->signature = MD5_CTX_SIGNATURE;
 	    ST(0) = sv_newmortal();
 	    sv_setref_pv(ST(0), sclass, (void*)context);
 	    SvREADONLY_on(SvRV(ST(0)));
