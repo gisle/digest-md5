@@ -1,13 +1,13 @@
 package Digest::MD5;
 
 use strict;
-use vars qw($VERSION @ISA @EXPORT_OK);
+use vars qw($VERSION @ISA @EXPORT);
 
 $VERSION = '1.9953';  # $Date$
 
 require Exporter;
 *import = \&Exporter::import;
-@EXPORT_OK = qw(md5 md5_hex md5_base64);
+@EXPORT = qw(md5_bin md5_hex md5_base64);
 
 require DynaLoader;
 @ISA=qw(DynaLoader);
@@ -20,73 +20,83 @@ __END__
 
 =head1 NAME
 
-MD5 - Perl interface to the MD5 Message-Digest Algorithm
+Digest::MD5 - Perl interface to the MD5 Message-Digest Algorithm
 
 =head1 SYNOPSIS
 
-    use MD5;
-    
-    $context = new MD5;
-    $context->reset();
-    
-    $context->add(LIST);
-    $context->addfile(HANDLE);
-    
-    $digest = $context->digest();
-    $string = $context->hexdigest();
+ # Procedural style
+ use Digest::MD5  qw(md5_bin md5_hex md5_base64);
 
-    $digest = MD5->hash(SCALAR);
-    $string = MD5->hexhash(SCALAR);
+ $digest = unpack("H*", md5_bin($data));
+ $digest = md5_hex($data);
+ $digest = md5_base64($data);
+    
+
+ # OO style
+ use Digest::MD5 ();
+
+ $ctx = Digest::MD5->new;
+
+ $ctx->add($data);
+ $ctx->addfile(*FILE);
+
+ $digest = $ctx->digest;
+ $digest = $ctx->hexdigest;
+ $digest = $ctx->b64digest;
 
 =head1 DESCRIPTION
 
-The B<MD5> module allows you to use the RSA Data Security Inc. MD5
-Message Digest algorithm from within Perl programs.
+The C<Digest::MD5> module allows you to use the RSA Data Security
+Inc. MD5 Message Digest algorithm from within Perl programs.  The
+algorithm takes as input a message of arbitrary length and produces as
+output a 128-bit "fingerprint" or "message digest" of the input.
 
-A new MD5 context object is created with the B<new> operation.
-Multiple simultaneous digest contexts can be maintained, if desired.
-The context is updated with the B<add> operation which adds the
-strings contained in the I<LIST> parameter. Note, however, that
-C<add('foo', 'bar')>, C<add('foo')> followed by C<add('bar')> and
-C<add('foobar')> should all give the same result.
+The C<Digest::MD5> module provide a procedural interface for simple
+use, as well as an object oriented interface that can handle messages
+of arbitrary length and which can read files directly.
 
-The final message digest value is returned by the B<digest> operation
-as a 16-byte binary string. This operation delivers the result of
-B<add> operations since the last B<new> or B<reset> operation. Note
-that the B<digest> operation is effectively a destructive, read-once
-operation. Once it has been performed, the context must be B<reset>
-before being used to calculate another digest value.
+The digest can be delivered in three formats:
 
-Several convenience functions are also provided. The B<addfile>
-operation takes an open file-handle and reads it until end-of file in
-1024 byte blocks adding the contents to the context. The file-handle
-can either be specified by name or passed as a type-glob reference, as
-shown in the examples below. The B<hexdigest> operation calls
-B<digest> and returns the result as a printable string of hexdecimal
-digits. This is exactly the same operation as performed by the
-B<unpack> operation in the examples below.
+=over 8
 
-The B<hash> operation can act as either a static member function (ie
-you invoke it on the MD5 class as in the synopsis above) or as a
-normal virtual function. In both cases it performs the complete MD5
-cycle (reset, add, digest) on the supplied scalar value. This is
-convenient for handling small quantities of data. When invoked on the
-class a temporary context is created. When invoked through an already
-created context object, this context is used. The latter form is
-slightly more efficient. The B<hexhash> operation is analogous to
-B<hexdigest>.
+=item I<binary>
+
+16 bytes of binary data.  This is the most compact form, but it is not
+well suited for printing or embedding in places that can't handle
+arbitrary data.
+
+=item I<hex>
+
+A 32 characters long string of hexadecimal digits.  This is the most
+common way to present MD5 digests.
+
+=item I<base64>
+
+A 22 character long string of printable characters.  This is the
+base64 encoded representation of the digest with the 2 bytes of
+padding removed.  The L<MIME::Base64> tells you more about this
+encoding.
+
+=back
 
 =head1 FUNCTIONS
 
-The following functions can be exported on explicit request.
+The following functions are exported.
 
 =over 4
 
-=item md5($data,...)
+=item md5_bin($data,...)
+
+This function will concatenate all the data given as argument as the
+message and return the binary MD5 digest.
 
 =item md5_hex($data,...)
 
+Same as md5_bin(), but will return the digest in hexadecimal form.
+
 =item md5_base64($data,...)
+
+Same as md5_bin(), but will return the digest as a base64 encoded string.
 
 =back
 
@@ -96,95 +106,107 @@ The following methods are available:
 
 =over 4
 
-=item $md5 = MD5->new([$data],...)
+=item $md5 = MD5->new
+
+The constructor returns a new C<MD5> object which encapsulate the
+state of the MD5 message-digest algorithm.  You can add data to the
+object and finally ask for the digest.
+
+If called as a instance method (i.e. $md5->new) it will just reset the
+state the object to the state of a newly created object.  No new
+object is created in this case.
+
+=item $md5->reset
+
+This is just an alias for $md5->new.
 
 =item $md5->add($data,...)
 
-=item $md5->addfile($handle)
+The $data provided as argument are appended to the message we
+calculate the digest for.  The return value is the $md5 object itself.
+
+=item $md5->addfile($io_handle)
+
+The $io_handle is read until EOF and the content is appended to the
+message we calculate the digest for.  The return value is the $md5
+object itself.
 
 =item $md5->digest
 
+Return the binary digest for the message.  Note that the C<digest>
+operation is effectively a destructive, read-once operation. Once it
+has been performed, the MD5 context object must be C<reset> before
+being used to calculate another digest value.
+
 =item $md5->hexdigest
+
+Same as $md5->digest, but will return the digest in hexadecimal form.
 
 =item $md5->b64digest
 
-=item MD5->hash($data,...)
-
-=item MD5->hexhash($data,...)
+Same as $md5->digest, but will return the digest as a base64 encoded
+string.
 
 =back
 
 
 =head1 EXAMPLES
 
-    use MD5;
-    
-    $md5 = new MD5;
-    $md5->add('foo', 'bar');
-    $md5->add('baz');
-    $digest = $md5->digest();
-    
-    print("Digest is " . unpack("H*", $digest) . "\n");
+The simplest way to use this library is to import the md5_hex()
+function (or one of its cousins):
+
+    use Digest::MD5 qw(md5_hex);
+    print "Digest is ", md5_hex("foobarbaz"), "\n";
 
 The above example would print out the message
 
     Digest is 6df23dc03f9b54cc38a0fc1483df6e21
 
-provided that the implementation is working correctly.
+provided that the implementation is working correctly.  The same
+checksum can also be calculated in OO style:
 
-Remembering the Perl motto ("There's more than one way to do it"), the
-following should all give the same result:
+    use Digest::MD5 ();
+    
+    $md5 = Digest::MD5->new;
+    $md5->add('foo', 'bar');
+    $md5->add('baz');
+    $digest = $md5->digest();
+    
+    print "Digest is ", unpack("H*", $digest), "\n";
 
-    use MD5;
-    $md5 = new MD5;
+With OO style you can break the message arbitrary.  This means that we
+are no longer limited to have space for the whole message in memory.
+We can handle messages of any size.
 
-    open(P, "/etc/passwd") or die "Can't open /etc/passwd ($!)\n";
-    binmode(P);
+This is useful when calculating checksum for files:
 
-    seek(P, 0, 0);
-    $md5->reset;
-    $md5->addfile(P);
-    $d = $md5->hexdigest;
-    print "addfile (handle name) = $d\n";
+    use Digest::MD5 ();
 
-    seek(P, 0, 0);
-    $md5->reset;
-    $md5->addfile(\*P);
-    $d = $md5->hexdigest;
-    print "addfile (type-glob reference) = $d\n";
+    my $file = shift || "/etc/passwd";
+    open(FILE, $file) or die "Can't open '$file': $!";
+    binmode(FILE);
 
-    seek(P, 0, 0);
-    $md5->reset;
-    while (<P>)
-    {
+    $md5 = Digest::MD5->new;
+    while (<FILE>) {
         $md5->add($_);
     }
-    $d = $md5->hexdigest;
-    print "Line at a time = $d\n";
+    close(FILE);
+    print $md5->b64digest, " $file\n";
 
-    seek(P, 0, 0);
-    $md5->reset;
-    $md5->add(<P>);
-    $d = $md5->hexdigest;
-    print "All lines at once = $d\n";
+Or we can use the builtin addfile method to read the file much faster:
 
-    seek(P, 0, 0);
-    $md5->reset;
-    while (read(P, $data, (rand % 128) + 1))
-    {
-        $md5->add($data);
-    }
-    $d = $md5->hexdigest;
-    print "Random chunks = $d\n";
+    use Digest::MD5 ();
 
-    seek(P, 0, 0);
-    $md5->reset;
-    undef $/;
-    $data = <P>;
-    $d = $md5->hexhash($data);
-    print "Single string = $d\n";
+    my $file = shift || "/etc/passwd";
+    open(FILE, $file) or die "Can't open '$file': $!";
+    binmode(FILE);
 
-    close(P);
+    print Digest::MD5->new->addfile(*FILE)->hexdigest, " $file\n";
+
+=head1 SEE ALSO
+
+L<SHA>, L<HMAC::MD5>,
+L<MIME::Base64>
 
 =head1 COPYRIGHT
 
@@ -195,9 +217,9 @@ modify it under the same terms as Perl itself.
  Copyright 1995-1996 Neil Winton.
  Copyright 1991-1992 RSA Data Security, Inc.
 
-The MD5 algorithm is defined in RFC1321. The basic C code implementing
-the algorithm is derived from that in the RFC and is covered by the
-following copyright:
+The MD5 algorithm is defined in RFC 1321. The basic C code
+implementing the algorithm is derived from that in the RFC and is
+covered by the following copyright:
 
 =over 4
 
@@ -232,7 +254,7 @@ licences.
 
 =head1 AUTHORS
 
-The MD5 interface was written by Neil Winton
+The original MD5 interface was written by Neil Winton
 (C<N.Winton@axion.bt.co.uk>).
 
 This release was made by Gisle Aas <gisle@aas.no>
