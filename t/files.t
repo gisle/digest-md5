@@ -23,15 +23,15 @@ if (ord "A" == 193) { # EBCDIC
 4ee4091bda2bb74fb2416c2fdb0c4d4a  Changes
 0565ec21b15c0f23f4c51fb327c8926d  README
 b00637894d2bd395ffda2fa84adefdfd  MD5.pm
-20cd22cecca8f24e807a76b9c0d575e3  MD5.xs
+69a111069b0948dc9344f73e6524317a  MD5.xs
 276da0aa4e9a08b7fe09430c9c5690aa  rfc1321.txt
 EOT
 } elsif ("\n" eq "\015") { # MacOS
     $EXPECT = <<EOT;
-d7b1bf11283114d1b765f433a5d7b447  Changes
+0b95218ddeca76d2ccd6362b8e7c05a4  Changes
 6c950a0211a5a28f023bb482037698cd  README
 f854bd4984ad0e73c483a49a28893c74  MD5.pm
-e3a430cf5604b80dd642de5bcc1a8221  MD5.xs
+810dbca708183e3402f3354e5bbf8401  MD5.xs
 754b9db19f79dbc4992f7166eb0f37ce  rfc1321.txt
 EOT
 } else {
@@ -40,7 +40,7 @@ EOT
 d7b1bf11283114d1b765f433a5d7b447  Changes
 6c950a0211a5a28f023bb482037698cd  README
 f854bd4984ad0e73c483a49a28893c74  MD5.pm
-e3a430cf5604b80dd642de5bcc1a8221  MD5.xs
+810dbca708183e3402f3354e5bbf8401  MD5.xs
 754b9db19f79dbc4992f7166eb0f37ce  rfc1321.txt
 EOT
 }
@@ -88,7 +88,9 @@ for (split /^/, $EXPECT) {
 	 next;
      }
      if ($ENV{MAC_MD5SUM}) {
+         require Encode;
 	 my $data = cat_file($file);	
+	 Encode::from_to($data, 'latin1', 'MacRoman');
 	 print md5_hex($data), "  $base\n";
 	 next;
      }

@@ -44,14 +44,17 @@ extern "C" {
 }
 #endif
 
-#ifndef PATCHLEVEL
+#ifndef PERL_VERSION
 #    include <patchlevel.h>
 #    if !(defined(PERL_VERSION) || (SUBVERSION > 0 && defined(PATCHLEVEL)))
 #        include <could_not_find_Perl_patchlevel.h>
 #    endif
+#    define PERL_REVISION       5
+#    define PERL_VERSION        PATCHLEVEL
+#    define PERL_SUBVERSION     SUBVERSION
 #endif
 
-#if PATCHLEVEL <= 4 && !defined(PL_dowarn)
+#if PERL_VERSION <= 4 && !defined(PL_dowarn)
    #define PL_dowarn dowarn
 #endif
 
