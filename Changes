@@ -1,3 +1,9 @@
+
+
+   $md5->b64digest implemented with same base64 encoder as md5_base64.
+
+
+
 1998-10-23   Gisle Aas <aas@sn.no>
 
    Release 1.99_52
@@ -22,7 +28,7 @@
 
       MD5->new($data)->hexdigest;
 
-   New $md5->b62digest method.
+   New $md5->b64digest method.
 
    New functions that are exported on request: md5, md5_hex, md5_base64
 
