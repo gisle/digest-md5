@@ -419,13 +419,10 @@ MODULE = Digest::MD5		PACKAGE = Digest::MD5
 PROTOTYPES: DISABLE
 
 void
-new(xclass, ...)
+new(xclass)
 	SV* xclass
     PREINIT:
 	MD5_CTX* context;
-	STRLEN len;
-	unsigned char *data;
-	int i;
     PPCODE:
 	if (!SvROK(xclass)) {
 	    char *sclass = SvPV(xclass, na);
@@ -437,10 +434,6 @@ new(xclass, ...)
 	    context = get_md5_ctx(xclass);
 	}
         MD5Init(context);
-	for (i = 1; i < items; i++) {
-	    data = (unsigned char *)(SvPV(ST(i), len));
-	    MD5Update(context, data, len);
-	}
 	XSRETURN(1);
 
 void
@@ -514,7 +507,7 @@ b64digest(context)
 SV*
 md5(...)
     ALIAS:
-	Digest::MD5::md5        = 1
+	Digest::MD5::md5_bin    = 1
 	Digest::MD5::md5_hex    = 2
 	Digest::MD5::md5_base64 = 3
     PREINIT:
