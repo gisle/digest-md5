@@ -55,6 +55,12 @@ extern "C" {
    #define PL_dowarn dowarn
 #endif
 
+#ifdef G_WARN_ON
+   #define DOWARN (PL_dowarn & G_WARN_ON)
+#else
+   #define DOWARN PL_dowarn
+#endif
+
 #ifdef SvPVbyte
    #if PERL_REVISION == 5 && PERL_VERSION < 7
        /* SvPVbyte does not work in perl-5.6.1, borrowed version for 5.7.3 */
@@ -664,7 +670,7 @@ md5(...)
     PPCODE:
 	MD5Init(&ctx);
 
-	if (PL_dowarn) {
+	if (DOWARN) {
             char *msg = 0;
 	    if (items == 1) {
 		if (SvROK(ST(0))) {
