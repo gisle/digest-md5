@@ -5,6 +5,8 @@ use strict;
 use Config qw(%Config);
 use ExtUtils::MakeMaker;
 
+my $PERL_CORE = grep $_ eq "PERL_CORE=1", @ARGV;
+
 my @extra;
 @extra = (DEFINE => "-DU32_ALIGNMENT_REQUIRED") unless free_u32_alignment();
 
@@ -18,6 +20,7 @@ if ($^O eq 'VMS') {
 }
 
 push(@extra, 'INSTALLDIRS'  => 'perl') if $] >= 5.008;
+push(@extra, 'MAN3PODS' => {}) if $PERL_CORE; # Pods built by installman.
 
 WriteMakefile(
     'NAME'	   => 'Digest::MD5',
