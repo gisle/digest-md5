@@ -2,6 +2,7 @@ README			Guess what?
 MANIFEST		This file
 MD5.pm			Digest::MD5 Perl Module
 lib/MD5.pm		MD5 backwards compatibility stuff
+lib/Digest.pm		Loading frontend
 lib/Digest/HMAC.pm      HMAC implementation
 lib/Digest/HMAC_MD5.pm  HMAC using MD5
 lib/Digest/HMAC_SHA1.pm HMAC using SHA-1
