@@ -1,3 +1,10 @@
+#!perl -w
+
+if ($] < 5.006) {
+    print "1..0\n";
+    exit;
+}
+
 print "1..3\n";
 
 use strict;
@@ -10,7 +17,7 @@ eval {
     print md5_hex($str);
     print "not ok 1\n";  # should not run
 };
-print "not " unless $@ && $@ =~ /^Wide character/;
+print "not " unless $@ && $@ =~ /^(Big byte|Wide character)/;
 print "ok 1\n";
 
 chop($str);  # only bytes left
