@@ -1,6 +1,6 @@
 #!perl -w
 
-BEGIN { require 5.004 }
+BEGIN { require 5.006 }
 use strict;
 use Config qw(%Config);
 use ExtUtils::MakeMaker;

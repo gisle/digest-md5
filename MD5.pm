@@ -9,9 +9,6 @@ require Exporter;
 *import = \&Exporter::import;
 @EXPORT_OK = qw(md5 md5_hex md5_base64);
 
-require DynaLoader;
-@ISA=qw(DynaLoader);
-
 eval {
     require Digest::base;
     push(@ISA, 'Digest::base');
@@ -23,7 +20,8 @@ if ($@) {
 
 
 eval {
-    Digest::MD5->bootstrap($VERSION);
+    require XSLoader;
+    XSLoader::load('Digest::MD5', $VERSION);
 };
 if ($@) {
     my $olderr = $@;
