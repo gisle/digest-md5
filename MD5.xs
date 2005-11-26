@@ -625,10 +625,18 @@ addfile(self, fh)
     PREINIT:
 	MD5_CTX* context = get_md5_ctx(aTHX_ self);
 	STRLEN fill = context->bytes_low & 0x3F;
+#ifdef USE_HEAP_INSTEAD_OF_STACK
+	unsigned char* buffer;
+#else
 	unsigned char buffer[4096];
+#endif
 	int  n;
     CODE:
 	if (fh) {
+#ifdef USE_HEAP_INSTEAD_OF_STACK
+	    New(0, buffer, 4096, unsigned char);
+	    assert(buffer);
+#endif
             if (fill) {
 	        /* The MD5Update() function is faster if it can work with
 	         * complete blocks.  This will fill up any buffered block
@@ -645,6 +653,9 @@ addfile(self, fh)
             while ( (n = PerlIO_read(fh, buffer, sizeof(buffer))) > 0) {
 	        MD5Update(context, buffer, n);
 	    }
+#ifdef USE_HEAP_INSTEAD_OF_STACK
+	    Safefree(buffer);
+#endif
 	    if (PerlIO_error(fh)) {
 		croak("Reading from filehandle failed");
 	    }
