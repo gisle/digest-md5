@@ -317,7 +317,7 @@ L<md5sum(1)>
 
 RFC 1321
 
-http://en.wikipedia.org/wiki/Md5
+http://en.wikipedia.org/wiki/MD5
 
 The paper "How to Break MD5 and Other Hash Functions" by Xiaoyun Wang
 and Hongbo Yu.
