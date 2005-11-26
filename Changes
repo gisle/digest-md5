@@ -1,5 +1,17 @@
 2005-11-26   Gisle Aas <gisle@ActiveState.com>
 
+   Release 2.35
+
+   Forgot to incorporate fixes already applied to bleadperl :-(
+     - doc typo
+     - consting
+     - unused my_na
+     - USE_HEAP_INSTEAD_OF_STACK for Symbian
+
+
+
+2005-11-26   Gisle Aas <gisle@ActiveState.com>
+
    Release 2.34
 
    Document that it is now easy to generate different messages that produce the
