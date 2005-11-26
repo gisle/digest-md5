@@ -80,7 +80,7 @@ Note that the MD5 algorithm is not as strong as it used to be.  It has
 since 2005 been easy to generate different messages that produce the
 same MD5 digest.  It still seems hard to generate messages that
 produce a given digest, but it is probably wise to move to stronger
-algorithms for application depends on the digest to uniquely identify
+algorithms for applications that depend on the digest to uniquely identify
 a message.
 
 The C<Digest::MD5> module provide a procedural interface for simple
