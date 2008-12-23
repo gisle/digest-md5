@@ -17,7 +17,7 @@ if ($^O eq 'VMS') {
 }
 
 push(@extra, 'INSTALLDIRS'  => 'perl') if $] >= 5.008;
-push @extra, 'LICENSE' => 'perl' if $ExtUtils::MakeMaker::VERSION >= "6.30";
+push @extra, 'LICENSE' => 'perl' if eval($ExtUtils::MakeMaker::VERSION) >= "6.30";
 
 WriteMakefile(
     'NAME'	   => 'Digest::MD5',
