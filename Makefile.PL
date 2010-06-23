@@ -73,8 +73,8 @@ sub free_u32_alignment
 int main(int argc, char** argv, char** env)
 {
 #if BYTEORDER == 0x1234 || BYTEORDER == 0x4321
-    U8 buf[] = "\0\0\0\1\0\0\0\0";
-    U32 *up;
+    volatile U8 buf[] = "\0\0\0\1\0\0\0\0";
+    volatile U32 *up;
     int i;
 
     if (sizeof(U32) != 4) {
