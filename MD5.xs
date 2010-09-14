@@ -87,6 +87,24 @@ extern "C" {
    #define aTHX_
 #endif
 
+STATIC MGVTBL vtbl_md5 = {
+    NULL, /* get */
+    NULL, /* set */
+    NULL, /* len */
+    NULL, /* clear */
+    NULL, /* free */
+#ifdef MGf_COPY
+    NULL, /* copy */
+#endif
+#ifdef MGf_DUP
+    NULL, /* dup */
+#endif
+#ifdef MGf_LOCAL
+    NULL /* local */
+#endif
+};
+
+
 /* Perl does not guarantee that U32 is exactly 32 bits.  Some system
  * has no integral type with exactly 32 bits.  For instance, A Cray has
  * short, int and long all at 64 bits so we need to apply this macro
@@ -133,12 +151,9 @@ static void u2s(U32 u, U8* s)
                         ((U32)(*(s+3)) << 24))
 #endif
 
-#define MD5_CTX_SIGNATURE 200003165
-
 /* This stucture keeps the current state of algorithm.
  */
 typedef struct {
-  U32 signature;   /* safer cast in get_md5_ctx() */
   U32 A, B, C, D;  /* current digest */
   U32 bytes_low;   /* counts bytes in message */
   U32 bytes_high;  /* turn it into a 64-bit counter */
@@ -466,17 +481,30 @@ MD5Final(U8* digest, MD5_CTX *ctx)
 
 static MD5_CTX* get_md5_ctx(pTHX_ SV* sv)
 {
-    if (SvROK(sv)) {
-	sv = SvRV(sv);
-	if (SvIOK(sv)) {
-	    MD5_CTX* ctx = INT2PTR(MD5_CTX*, SvIV(sv));
-	    if (ctx && ctx->signature == MD5_CTX_SIGNATURE) {
-		return ctx;
-            }
-        }
+    MAGIC *mg;
+
+    if (!sv_derived_from(sv, "Digest::MD5"))
+	croak("Not a reference to a Digest::MD5 object");
+
+    for (mg = SvMAGIC(SvRV(sv)); mg; mg = mg->mg_moremagic) {
+	if (mg->mg_type == PERL_MAGIC_ext && mg->mg_virtual == &vtbl_md5) {
+	    return (MD5_CTX *)mg->mg_ptr;
+	}
     }
-    croak("Not a reference to a Digest::MD5 object");
+
     return (MD5_CTX*)0; /* some compilers insist on a return value */
+}
+
+static SV * new_md5_ctx(pTHX_ MD5_CTX *context, const char *klass)
+{
+    SV *sv = newSV(0);
+    SV *obj = newRV_noinc(sv);
+
+    sv_bless(obj, gv_stashpv(klass, 0));
+
+    sv_magicext(sv, NULL, PERL_MAGIC_ext, &vtbl_md5, (void *)context, 0);
+
+    return obj;
 }
 
 
@@ -568,16 +596,13 @@ new(xclass)
     PPCODE:
 	if (!SvROK(xclass)) {
 	    STRLEN my_na;
-	    char *sclass = SvPV(xclass, my_na);
+	    const char *sclass = SvPV(xclass, my_na);
 	    New(55, context, 1, MD5_CTX);
-	    context->signature = MD5_CTX_SIGNATURE;
-	    ST(0) = sv_newmortal();
-	    sv_setref_pv(ST(0), sclass, (void*)context);
-	    SvREADONLY_on(SvRV(ST(0)));
+	    ST(0) = sv_2mortal(new_md5_ctx(aTHX_ context, sclass));
 	} else {
 	    context = get_md5_ctx(aTHX_ xclass);
 	}
-        MD5Init(context);
+	MD5Init(context);
 	XSRETURN(1);
 
 void
@@ -589,9 +614,7 @@ clone(self)
 	MD5_CTX* context;
     PPCODE:
 	New(55, context, 1, MD5_CTX);
-	ST(0) = sv_newmortal();
-	sv_setref_pv(ST(0), myname , (void*)context);
-	SvREADONLY_on(SvRV(ST(0)));
+	ST(0) = sv_2mortal(new_md5_ctx(aTHX_ context, myname));
 	memcpy(context,cont,sizeof(MD5_CTX));
 	XSRETURN(1);
 
