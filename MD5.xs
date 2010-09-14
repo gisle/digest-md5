@@ -87,23 +87,6 @@ extern "C" {
    #define aTHX_
 #endif
 
-STATIC MGVTBL vtbl_md5 = {
-    NULL, /* get */
-    NULL, /* set */
-    NULL, /* len */
-    NULL, /* clear */
-    NULL, /* free */
-#ifdef MGf_COPY
-    NULL, /* copy */
-#endif
-#ifdef MGf_DUP
-    NULL, /* dup */
-#endif
-#ifdef MGf_LOCAL
-    NULL /* local */
-#endif
-};
-
 
 /* Perl does not guarantee that U32 is exactly 32 bits.  Some system
  * has no integral type with exactly 32 bits.  For instance, A Cray has
@@ -159,6 +142,39 @@ typedef struct {
   U32 bytes_high;  /* turn it into a 64-bit counter */
   U8 buffer[128];  /* collect complete 64 byte blocks */
 } MD5_CTX;
+
+#ifdef USE_ITHREADS
+STATIC int dup_md5_ctx(pTHX_ MAGIC *mg, CLONE_PARAMS *params)
+{
+    MD5_CTX *new_ctx;
+    PERL_UNUSED_VAR(params);
+    New(55, new_ctx, 1, MD5_CTX);
+    memcpy(new_ctx, mg->mg_ptr, sizeof(MD5_CTX));
+    mg->mg_ptr = (char *)new_ctx;
+    return 0;
+}
+#endif
+
+STATIC MGVTBL vtbl_md5 = {
+    NULL, /* get */
+    NULL, /* set */
+    NULL, /* len */
+    NULL, /* clear */
+    NULL, /* free */
+#ifdef MGf_COPY
+    NULL, /* copy */
+#endif
+#ifdef MGf_DUP
+# ifdef USE_ITHREADS
+    dup_md5_ctx,
+# else
+    NULL, /* dup */
+# endif
+#endif
+#ifdef MGf_LOCAL
+    NULL /* local */
+#endif
+};
 
 
 /* Padding is added at the end of the message in order to fill a
@@ -499,10 +515,20 @@ static SV * new_md5_ctx(pTHX_ MD5_CTX *context, const char *klass)
 {
     SV *sv = newSV(0);
     SV *obj = newRV_noinc(sv);
+#ifdef USE_ITHREADS
+    MAGIC *mg;
+#endif
 
     sv_bless(obj, gv_stashpv(klass, 0));
 
-    sv_magicext(sv, NULL, PERL_MAGIC_ext, &vtbl_md5, (void *)context, 0);
+#ifdef USE_ITHREADS
+    mg =
+#endif
+	sv_magicext(sv, NULL, PERL_MAGIC_ext, &vtbl_md5, (void *)context, 0);
+
+#ifdef USE_ITHREADS
+    mg->mg_flags |= MGf_DUP;
+#endif
 
     return obj;
 }
