@@ -463,6 +463,7 @@ static MD5_CTX* get_md5_ctx(pTHX_ SV* sv)
 	}
     }
 
+    croak("Failed to get MD5_CTX pointer");
     return (MD5_CTX*)0; /* some compilers insist on a return value */
 }
 
