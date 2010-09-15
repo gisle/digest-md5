@@ -43,51 +43,6 @@ extern "C" {
 }
 #endif
 
-#ifndef PERL_VERSION
-#    include <patchlevel.h>
-#    if !(defined(PERL_VERSION) || (SUBVERSION > 0 && defined(PATCHLEVEL)))
-#        include <could_not_find_Perl_patchlevel.h>
-#    endif
-#    define PERL_REVISION       5
-#    define PERL_VERSION        PATCHLEVEL
-#    define PERL_SUBVERSION     SUBVERSION
-#endif
-
-#if PERL_VERSION <= 4 && !defined(PL_dowarn)
-   #define PL_dowarn dowarn
-#endif
-
-#ifdef G_WARN_ON
-   #define DOWARN (PL_dowarn & G_WARN_ON)
-#else
-   #define DOWARN PL_dowarn
-#endif
-
-#ifdef SvPVbyte
-   #if PERL_REVISION == 5 && PERL_VERSION < 7
-       /* SvPVbyte does not work in perl-5.6.1, borrowed version for 5.7.3 */
-       #undef SvPVbyte
-       #define SvPVbyte(sv, lp) \
-	  ((SvFLAGS(sv) & (SVf_POK|SVf_UTF8)) == (SVf_POK) \
-     	   ? ((lp = SvCUR(sv)), SvPVX(sv)) : my_sv_2pvbyte(aTHX_ sv, &lp))
-
-       static char *
-       my_sv_2pvbyte(pTHX_ register SV *sv, STRLEN *lp)
-       {
-	   sv_utf8_downgrade(sv,0);
-           return SvPV(sv,*lp);
-       }
-   #endif
-#else
-   #define SvPVbyte SvPV
-#endif
-
-#ifndef dTHX
-   #define pTHX_
-   #define aTHX_
-#endif
-
-
 /* Perl does not guarantee that U32 is exactly 32 bits.  Some system
  * has no integral type with exactly 32 bits.  For instance, A Cray has
  * short, int and long all at 64 bits so we need to apply this macro
@@ -742,7 +697,7 @@ md5(...)
     PPCODE:
 	MD5Init(&ctx);
 
-	if (DOWARN) {
+	if (PL_dowarn & G_WARN_ON) {
             const char *msg = 0;
 	    if (items == 1) {
 		if (SvROK(ST(0))) {

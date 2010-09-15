@@ -13,15 +13,15 @@ use Digest::MD5 qw(md5 md5_hex md5_base64);
 my $EXPECT;
 if (ord "A" == 193) { # EBCDIC
     $EXPECT = <<EOT;
-11e8028ee426273db6b6db270a8bb38c  README
-baa3eee4f9858c053c8f9ca8effe4f4b  MD5.xs
+4f932585bed0cc942186fb51daff4839  README
+193abcfb4767f4473509b21a9b42776b  MD5.xs
 276da0aa4e9a08b7fe09430c9c5690aa  rfc1321.txt
 EOT
 } else {
     # This is the output of: 'md5sum README MD5.xs rfc1321.txt'
     $EXPECT = <<EOT;
-c95549c6c5e1e1c078b27042f1dc850f  README
-b8cfabf3a080b242cb3800b322c1ba6c  MD5.xs
+c8d3f8457a2d6983253d771ffddb9f4c  README
+c14d082938335107aa429c3d351f178a  MD5.xs
 754b9db19f79dbc4992f7166eb0f37ce  rfc1321.txt
 EOT
 }
