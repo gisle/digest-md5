@@ -9,6 +9,7 @@
       Attach context pointers using sv magic
       Add failing test for thread cloning
       Clone MD5 contexts on thread cloning
+      get_md5_ctx should never return anything but a valid pointer
 
    Gisle Aas (1):
       perl-5.6 no longer supported
