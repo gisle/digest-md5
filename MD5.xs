@@ -616,8 +616,10 @@ add(self, ...)
 	STRLEN len;
     PPCODE:
 	for (i = 1; i < items; i++) {
+            U32 had_utf8 = SvUTF8(ST(i));
 	    data = (unsigned char *)(SvPVbyte(ST(i), len));
 	    MD5Update(context, data, len);
+	    if (had_utf8) sv_utf8_upgrade(ST(i));
 	}
 	XSRETURN(1);  /* self */
 
@@ -710,7 +712,7 @@ md5(...)
 		}
 	    }
 	    else if (items > 1) {
-		data = (unsigned char *)SvPVbyte(ST(0), len);
+		data = (unsigned char *)SvPV(ST(0), len);
 		if (len == 11 && memEQ("Digest::MD5", data, 11)) {
 		    msg = "probably called as class method";
 		}
@@ -728,8 +730,10 @@ md5(...)
 	}
 
 	for (i = 0; i < items; i++) {
+            U32 had_utf8 = SvUTF8(ST(i));
 	    data = (unsigned char *)(SvPVbyte(ST(i), len));
 	    MD5Update(&ctx, data, len);
+	    if (had_utf8) sv_utf8_upgrade(ST(i));
 	}
 	MD5Final(digeststr, &ctx);
         ST(0) = make_mortal_sv(aTHX_ digeststr, ix);
