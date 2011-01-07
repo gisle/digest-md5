@@ -68,7 +68,7 @@
 
    Applied warning fix from Geoff Richards [RT#19643]
 
-   Applied compatiblity fix from Alexandr Ciornii [RT#30348]
+   Applied compatibility fix from Alexandr Ciornii [RT#30348]
 
 
 
@@ -594,7 +594,7 @@
 
    Release 1.99_55
 
-   Grahams HMAC_MD5.pm splitted into two modules.  Digest::HMAC and
+   Grahams HMAC_MD5.pm split into two modules.  Digest::HMAC and
    Digest::HMAC_MD5.  Also provide functional interface.  Documentation
    is still lacking.
 

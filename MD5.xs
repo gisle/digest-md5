@@ -89,7 +89,7 @@ static void u2s(U32 u, U8* s)
                         ((U32)(*(s+3)) << 24))
 #endif
 
-/* This stucture keeps the current state of algorithm.
+/* This structure keeps the current state of algorithm.
  */
 typedef struct {
   U32 A, B, C, D;  /* current digest */
@@ -555,7 +555,7 @@ static SV* make_mortal_sv(pTHX_ const unsigned char *src, int type)
 	len = 22;
 	break;
     default:
-	croak("Bad convertion type (%d)", type);
+	croak("Bad conversion type (%d)", type);
 	break;
     }
     return sv_2mortal(newSVpv(ret,len));
