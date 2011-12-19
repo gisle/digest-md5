@@ -1,3 +1,7 @@
+   
+   Shlomi Fish (1):
+      Modernize the code in Digest::MD5's POD.
+
 2010-09-30   Gisle Aas <gisle@ActiveState.com>
 
    Release 2.51
