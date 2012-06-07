@@ -30,7 +30,7 @@ if ($@) {
 	require Digest::Perl::MD5;
 
 	Digest::Perl::MD5->import(qw(md5 md5_hex md5_base64));
-	push(@ISA, "Digest::Perl::MD5");  # make OO interface work
+	unshift(@ISA, "Digest::Perl::MD5");  # make OO interface work
     };
     if ($@) {
 	# restore the original error
