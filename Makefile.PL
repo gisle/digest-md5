@@ -24,7 +24,7 @@ WriteMakefile(
     'AUTHOR'       => 'Gisle Aas <gisle@activestate.com>',
     'LICENSE'      => 'perl',
     'MIN_PERL_VERSION' => 5.006,
-    'PREREQ_PM'    => { 'File::Spec' => 0,
+    'PREREQ_PM'    => {
 			'Digest::base' => '1.00',
 			'XSLoader' => 0,
 		      },
