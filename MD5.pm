@@ -283,11 +283,10 @@ the file:
 
     print Digest::MD5->new->addfile($fh)->hexdigest, " $filename\n";
 
-Perl 5.8 support Unicode characters in strings.  Since the MD5
-algorithm is only defined for strings of bytes, it can not be used on
-strings that contains chars with ordinal number above 255.  The MD5
-functions and methods will croak if you try to feed them such input
-data:
+Since the MD5 algorithm is only defined for strings of bytes, it can not be
+used on strings that contains chars with ordinal number above 255 (Unicode
+strings).  The MD5 functions and methods will croak if you try to feed them
+such input data:
 
     use Digest::MD5 qw(md5_hex);
 
