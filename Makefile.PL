@@ -30,7 +30,7 @@ WriteMakefile(
 		      },
     'META_MERGE'   => {
         resources  => {
-            repository => 'http://github.com/gisle/digest-md5',
+            repository => 'https://github.com/gisle/digest-md5',
         }
     },
     'INSTALLDIRS'  => 'perl',
