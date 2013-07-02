@@ -6,7 +6,7 @@ use ExtUtils::MakeMaker;
 
 my @extra;
 push(@extra, DEFINE => "-DU32_ALIGNMENT_REQUIRED") unless free_u32_alignment();
-push(@extra, INSTALLDIRS => 'perl') if $] < 5.012;
+push(@extra, INSTALLDIRS => 'perl') if $] >= 5.008 && $] < 5.012;
 
 if ($^O eq 'VMS') {
     if (defined($Config{ccname})) {
