@@ -735,6 +735,45 @@ digest(context)
         XSRETURN(1);
 
 void
+context(ctx, ...)
+	MD5_CTX* ctx
+    PREINIT:
+	char out[16];
+        U32 w;
+    PPCODE:
+	if (items > 2) {
+	    STRLEN len;
+	    unsigned long blocks = SvUV(ST(1));
+	    unsigned char *buf = (unsigned char *)(SvPV(ST(2), len));
+	    ctx->A = buf[ 0] | (buf[ 1]<<8) | (buf[ 2]<<16) | (buf[ 3]<<24);
+	    ctx->B = buf[ 4] | (buf[ 5]<<8) | (buf[ 6]<<16) | (buf[ 7]<<24);
+	    ctx->C = buf[ 8] | (buf[ 9]<<8) | (buf[10]<<16) | (buf[11]<<24);
+	    ctx->D = buf[12] | (buf[13]<<8) | (buf[14]<<16) | (buf[15]<<24);
+	    ctx->bytes_low = blocks << 6;
+	    ctx->bytes_high = blocks >> 26;
+	    if (items == 4) {
+		buf = (unsigned char *)(SvPV(ST(3), len));
+		MD5Update(ctx, buf, len);
+	    }
+	    XSRETURN(1); /* ctx */
+	} else if (items != 1) {
+	    XSRETURN(0);
+	}
+
+        w=ctx->A; out[ 0]=w; out[ 1]=(w>>8); out[ 2]=(w>>16); out[ 3]=(w>>24);
+        w=ctx->B; out[ 4]=w; out[ 5]=(w>>8); out[ 6]=(w>>16); out[ 7]=(w>>24);
+        w=ctx->C; out[ 8]=w; out[ 9]=(w>>8); out[10]=(w>>16); out[11]=(w>>24);
+        w=ctx->D; out[12]=w; out[13]=(w>>8); out[14]=(w>>16); out[15]=(w>>24);
+
+	EXTEND(SP, 3);
+	ST(0) = sv_2mortal(newSVuv(ctx->bytes_high << 26 |
+				   ctx->bytes_low >> 6));
+	ST(1) = sv_2mortal(newSVpv(out, 16));
+	ST(2) = sv_2mortal(newSVpv((char *)ctx->buffer,
+				   ctx->bytes_low & 0x3F));
+	XSRETURN(3);
+
+void
 md5(...)
     ALIAS:
 	Digest::MD5::md5        = F_BIN
