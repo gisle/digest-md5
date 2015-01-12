@@ -155,26 +155,29 @@ STATIC int dup_md5_ctx(pTHX_ MAGIC *mg, CLONE_PARAMS *params)
 }
 #endif
 
-STATIC MGVTBL vtbl_md5 = {
+#if defined(MGf_DUP) && defined(USE_ITHREADS)
+const STATIC MGVTBL vtbl_md5 = {
     NULL, /* get */
     NULL, /* set */
     NULL, /* len */
     NULL, /* clear */
     NULL, /* free */
-#ifdef MGf_COPY
     NULL, /* copy */
-#endif
-#ifdef MGf_DUP
-# ifdef USE_ITHREADS
-    dup_md5_ctx,
-# else
-    NULL, /* dup */
-# endif
-#endif
-#ifdef MGf_LOCAL
+    dup_md5_ctx, /* dup */
     NULL /* local */
-#endif
 };
+#else
+/* declare as 5 member, not normal 8 to save image space*/
+const STATIC struct {
+	int (*svt_get)(SV* sv, MAGIC* mg);
+	int (*svt_set)(SV* sv, MAGIC* mg);
+	U32 (*svt_len)(SV* sv, MAGIC* mg);
+	int (*svt_clear)(SV* sv, MAGIC* mg);
+	int (*svt_free)(SV* sv, MAGIC* mg);
+} vtbl_md5 = {
+	NULL, NULL, NULL, NULL, NULL
+};
+#endif
 
 
 /* Padding is added at the end of the message in order to fill a
@@ -503,7 +506,8 @@ static MD5_CTX* get_md5_ctx(pTHX_ SV* sv)
 	croak("Not a reference to a Digest::MD5 object");
 
     for (mg = SvMAGIC(SvRV(sv)); mg; mg = mg->mg_moremagic) {
-	if (mg->mg_type == PERL_MAGIC_ext && mg->mg_virtual == &vtbl_md5) {
+	if (mg->mg_type == PERL_MAGIC_ext
+	    && mg->mg_virtual == (const MGVTBL * const)&vtbl_md5) {
 	    return (MD5_CTX *)mg->mg_ptr;
 	}
     }
@@ -525,7 +529,7 @@ static SV * new_md5_ctx(pTHX_ MD5_CTX *context, const char *klass)
 #ifdef USE_ITHREADS
     mg =
 #endif
-	sv_magicext(sv, NULL, PERL_MAGIC_ext, &vtbl_md5, (const char *)context, 0);
+	sv_magicext(sv, NULL, PERL_MAGIC_ext, (const MGVTBL * const)&vtbl_md5, (const char *)context, 0);
 
 #if defined(USE_ITHREADS) && defined(MGf_DUP)
     mg->mg_flags |= MGf_DUP;
