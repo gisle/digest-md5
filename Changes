@@ -1,3 +1,15 @@
+2015-01-12   Gisle Aas <gisle@ActiveState.com>
+
+   Release 2.54
+
+   David Mitchell: silence some compiler warnings
+   Jonathan Hall: Add ->context() feature
+   Steve Hay: Sync with blead
+   bulk88: const the vtable
+   zefram: 5.6 threads test fix
+
+
+
 2013-07-02   Gisle Aas <gisle@ActiveState.com>
 
    Release 2.53
