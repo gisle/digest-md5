@@ -3,6 +3,8 @@
 
 use strict;
 no strict 'vars';
-if ($Config{cc} =~ /64|n32/ && `$Config{cc} -version 2>&1` =~ /\s7\.1/) {
-    $self->{OPTIMIZE} = "-O1";
+if ( $Config{cc} =~ /64|n32/ && `$Config{cc} -version 2>&1` =~ /\s7\.1/ ) {
+    my $optimize = $Config{optimize};
+    $optimize =~ s/(^| )-O[2-9]\b/$1-O1/g
+      and $self->{OPTIMIZE} = $optimize;
 }
