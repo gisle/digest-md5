@@ -788,7 +788,7 @@ md5(...)
     PPCODE:
 	MD5Init(&ctx);
 
-	if (PL_dowarn & G_WARN_ON) {
+	if ((PL_dowarn & G_WARN_ON) || ckWARN(WARN_SYNTAX)) {
             const char *msg = 0;
 	    if (items == 1) {
 		if (SvROK(ST(0))) {
