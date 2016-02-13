@@ -4,7 +4,7 @@
       "Gisle Aas <gisle@activestate.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "ExtUtils::MakeMaker version 7.1, CPAN::Meta::Converter version 2.150005",
+   "generated_by" : "ExtUtils::MakeMaker version 6.66, CPAN::Meta::Converter version 2.133380",
    "license" : [
       "perl_5"
    ],
@@ -44,6 +44,5 @@
          "url" : "https://github.com/gisle/digest-md5"
       }
    },
-   "version" : "2.54",
-   "x_serialization_backend" : "JSON::PP version 2.27300"
+   "version" : "2.54"
 }
