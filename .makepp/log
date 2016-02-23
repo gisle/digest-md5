@@ -1,15 +1,15 @@
 3/usr/local/bin/makepp
 VERSION2.05.18.2darwin-thread-multi-2level
-LOAD140585036532128makefile140585035830440/users/pod/digest-md5140585035830440
-TRY140585036532128
+LOAD140346940023544makefile140346957141104/users/pod/digest-md5140346957141104
+TRY140346940023544
 USEdefault rule
-DEPEND140585036532128
-UP_TO_DATE140585036532128
-LOAD_REC140585036532128
-*** warning: MAKE redefined at `/users/pod/digest-md5/makefile:153', recursive make won't work as expected
-RULE_ALT/users/pod/digest-md5/makefile:347/users/pod/digest-md5/makefile:335140585036610816md5.o140585035830440
-RULE_ALT/users/pod/digest-md5/makefile:359/users/pod/digest-md5/makefile:347140585036610816
-*** /users/pod/digest-md5/makefile:656: error handling Mpp::makefile_0::s_signature statement
-/users/pod/digest-md5/makefile:656: invalid signature method :
+DEPEND140346940023544
+UP_TO_DATE140346940023544
+LOAD_REC140346940023544
+*** warning: MAKE redefined at `/users/pod/digest-md5/makefile:151', recursive make won't work as expected
+RULE_ALT/users/pod/digest-md5/makefile:343/users/pod/digest-md5/makefile:331140346940137280md5.o140346957141104
+RULE_ALT/users/pod/digest-md5/makefile:355/users/pod/digest-md5/makefile:343140346940137280
+*** /users/pod/digest-md5/makefile:652: error handling Mpp::makefile_0::s_signature statement
+/users/pod/digest-md5/makefile:652: invalid signature method :
 
 N_FILES000
