@@ -1,3 +1,16 @@
+2016-03-09   Gisle Aas <gisle@ActiveState.com>
+
+   Release 2.55
+
+   Gordon Stanton (2):
+      Make use warnings work including test cases.
+      Initial Travis config
+
+   Gisle Aas (1):
+      Avoid warning: 'static' is not at beginning of declaration [RT#105646] 
+
+
+
 2015-01-12   Gisle Aas <gisle@ActiveState.com>
 
    Release 2.54
