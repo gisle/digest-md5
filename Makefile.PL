@@ -5,7 +5,8 @@ use Config qw(%Config);
 use ExtUtils::MakeMaker;
 
 my @extra;
-push(@extra, DEFINE => "-DU32_ALIGNMENT_REQUIRED") unless free_u32_alignment();
+# perl5 core cannot be trusted with U32_ALIGNMENT_REQUIRED
+push(@extra, DEFINE => (free_u32_alignment() ? "-U" : "-D")."U32_ALIGNMENT_REQUIRED");
 push(@extra, INSTALLDIRS => 'perl') if $] >= 5.008 && $] < 5.012;
 
 if ($^O eq 'VMS') {
@@ -43,12 +44,18 @@ sub free_u32_alignment
 {
     $|=1;
     if (exists $Config{d_u32align}) {
-       print "Perl's config says that U32 access must ";
-       print "not " unless $Config{d_u32align};
-       print "be aligned.\n";
-       return !$Config{d_u32align};
+        # perl core probe fixed only with cperl5.22.2
+        if ($Config{usecperl} and $] >= 5.022002) {
+            print "Perl's config says that U32 access must ";
+            print "not " unless $Config{d_u32align};
+            print "be aligned.\n";
+            return !$Config{d_u32align};
+        } else {
+            print "Skipping broken perl d_u32align config: $Config{d_u32align}\n";
+        }
     }
-    
+
+    # TODO: only true on intel, not arm/sparc/mips/ppc architectures
     if ($^O eq 'VMS' || $^O eq 'MSWin32') {
        print "Assumes that $^O implies free alignment for U32 access.\n";
        return 1;
@@ -66,7 +73,10 @@ sub free_u32_alignment
 /*  This program allocates a buffer of U8 (char) and then tries */
 /*  to access it through a U32 pointer at every offset.  The    */
 /*  program  is expected to die with a bus error/seg fault for  */
-/*  machines that do not support unaligned integer read/write   */
+/*  machines that do not support unaligned integer read/write.   */
+/*  Note that on Intel it is dependend on the value of the AC bit */
+/*  (alignment check) in EFLAGS. Default off. Even if off, the code */
+/*  for unaligned access is slower. See http://orchistro.tistory.com/206 */
 /*--------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -79,13 +89,13 @@ sub free_u32_alignment
 
 int main(int argc, char** argv, char** env)
 {
-#if BYTEORDER == 0x1234 || BYTEORDER == 0x4321
+#if BYTEORDER == 0x1234 || BYTEORDER == 0x4321 || BYTEORDER == 0x87654321 || BYTEORDER == 0x12345678 || BYTEORDER == 0xFFFF
     volatile U8 buf[] = "\0\0\0\1\0\0\0\0";
     volatile U32 *up;
     int i;
 
     if (sizeof(U32) != 4) {
-	printf("sizeof(U32) is not 4, but %d\n", sizeof(U32));
+	printf("sizeof(U32) is not 4, but %d\n", (int)sizeof(U32));
 	exit(1);
     }
 
@@ -126,10 +136,12 @@ EOT
 
     my $cc_cmd = "$Config{cc} $Config{ccflags} -I$Config{archlibexp}/CORE";
     my $exe = "u32align$Config{exe_ext}";
-    $cc_cmd .= " -o $exe";
-    my $rc;
-    $rc = system("$cc_cmd $Config{ldflags} u32align.c $Config{libs}");
+    $cc_cmd .= " -o $exe $Config{ldflags} u32align.c $Config{libs}";
+    # memory_wrap in croak requires -lperl
+    $cc_cmd .= " -L$Config{archlibexp}/CORE -lperl" if $] > 5.019;
+    my  $rc = system($cc_cmd);
     if ($rc) {
+        print "$cc_cmd\n";
 	print "Can't compile test program.  Will ensure alignment to play safe.\n\n";
 	unlink("u32align.c", $exe, "u32align$Config{obj_ext}");
 	return 0;
