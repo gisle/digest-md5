@@ -3,7 +3,9 @@ package Digest::MD5;
 use strict;
 use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = '2.55';
+$VERSION = '2.55_01';
+my $XS_VERSION = $VERSION;
+$VERSION = eval $VERSION;
 
 require Exporter;
 *import = \&Exporter::import;
@@ -21,7 +23,7 @@ if ($@) {
 
 eval {
     require XSLoader;
-    XSLoader::load('Digest::MD5', $VERSION);
+    XSLoader::load('Digest::MD5', $XS_VERSION);
 };
 if ($@) {
     my $olderr = $@;
