@@ -1,8 +1,9 @@
+use strict;
+use warnings;
+
+use Digest::MD5 qw(md5 md5_hex md5_base64);
 
 print "1..3\n";
-
-use strict;
-use Digest::MD5 qw(md5 md5_hex md5_base64);
 
 # To update the EBCDIC section even on a Latin 1 platform,
 # run this script with $ENV{EBCDIC_MD5SUM} set to a true value.
