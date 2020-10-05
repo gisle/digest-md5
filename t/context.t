@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More;
+use Test::More tests => 35;
 use Digest::MD5;
 
 foreach my $length (
@@ -41,5 +41,3 @@ foreach my $length (
 
     is $got, $expect, "[$length] saved context";
 }
-
-done_testing;
