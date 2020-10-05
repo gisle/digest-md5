@@ -769,6 +769,10 @@ context(ctx, ...)
 	ST(0) = sv_2mortal(newSVuv(ctx->bytes_high << 26 |
 				   ctx->bytes_low >> 6));
 	ST(1) = sv_2mortal(newSVpv(out, 16));
+
+	if ((ctx->bytes_low & 0x3F) == 0)
+	    XSRETURN(2);
+
 	ST(2) = sv_2mortal(newSVpv((char *)ctx->buffer,
 				   ctx->bytes_low & 0x3F));
 	XSRETURN(3);
