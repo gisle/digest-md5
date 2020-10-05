@@ -1,17 +1,18 @@
 package Digest::MD5;
 
 use strict;
-use vars qw($VERSION @ISA @EXPORT_OK);
+use warnings;
 
-$VERSION = '2.55';
+our $VERSION = '2.55';
 
 require Exporter;
 *import = \&Exporter::import;
-@EXPORT_OK = qw(md5 md5_hex md5_base64);
+our @EXPORT_OK = qw(md5 md5_hex md5_base64);
 
+our @ISA;
 eval {
     require Digest::base;
-    push(@ISA, 'Digest::base');
+    @ISA = qw/Digest::base/;
 };
 if ($@) {
     my $err = $@;
