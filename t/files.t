@@ -15,14 +15,14 @@ my $EXPECT;
 if (ord "A" == 193) { # EBCDIC
     $EXPECT = <<EOT;
 0956ffb4f6416082b27d6680b4cf73fc  README
-d51ed1692075858052e4f95602c5895f  MD5.xs
+3fce99bf3f4df26d65843a6990849df0  MD5.xs
 276da0aa4e9a08b7fe09430c9c5690aa  rfc1321.txt
 EOT
 } else {
     # This is the output of: 'md5sum README MD5.xs rfc1321.txt'
     $EXPECT = <<EOT;
 2f93400875dbb56f36691d5f69f3eba5  README
-d51ed1692075858052e4f95602c5895f  MD5.xs
+3fce99bf3f4df26d65843a6990849df0  MD5.xs
 754b9db19f79dbc4992f7166eb0f37ce  rfc1321.txt
 EOT
 }
