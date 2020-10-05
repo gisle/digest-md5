@@ -3,7 +3,7 @@ package Digest::MD5;
 use strict;
 use warnings;
 
-our $VERSION = '2.55';
+our $VERSION = '2.56';
 
 require Exporter;
 *import = \&Exporter::import;
