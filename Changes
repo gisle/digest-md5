@@ -1,4 +1,9 @@
-2020-10-05 Todd Rinaldo <toddr@cpan.org>
+2020-10-05 Todd Rinaldo <toddr@cpan.org> 2.57
+
+- Merge change submitted to blead - https://github.com/Perl/perl5/commit/ee9ac1cd8eb988fea70841eae211b11355711416
+
+
+2020-10-05 Todd Rinaldo <toddr@cpan.org> 2.56
 
 - Github CI Perl 5.6..5.32
 - Fixup MANIFEST/MANIFEST.SKIP/.gitignore
